@@ -2,6 +2,12 @@
 
 ---
 
+## Overview
+
+Este repositorio recoge una guia practica para entender las bases de una infraestructura de servidor desde cero: instalacion de Debian Server, decisiones de particionado, uso de LVM, cifrado con LUKS y configuraciones pensadas tanto para entornos locales de laboratorio como para servidores modestos expuestos al publico.
+
+Tambien cubre la creacion de maquinas virtuales con VirtualBox, sus modos de red y las configuraciones necesarias para montar sandboxes, entornos de desarrollo, pruebas de servicios, pequenas arquitecturas de backend, exponer un servicio o simplemente tener un SO aislado. La idea es conocer primero como funcionan estas piezas manualmente para entender mejor las herramientas que las automatizan o envuelven despues, como Vagrant, plataformas IaaS o herramientas de infraestructura como codigo.
+
 ## 🐚 Instalacion de debian servers
 
 Cuando instalamos el SO desde la BIOS del sistema hay varias opciones para hacerlo. Según cuál seleccionamos, la configuración del SO será más específica o menos en la fase de instalación. Por norma general, las cosas que hay que configurar en esta fase, independientemente del tipo de instalación, son:
@@ -229,7 +235,10 @@ Después de los pasos previos, le damos a "finish" y comienza la instalación de
 
 Cuando creas una maquina virtual desde el hipervisor puedes elegir que modo de Red quieres usar para concestar las Vms con la Red. Segun el modo de de seleccionado el comportamiento interno de la Red, el alcanace, la forma de conctar con el host (servidor) y con elxterior que est ajecutando el hipervisor es distinta y cada uno esta destinado a un uso diferente. Por defecto las maquinas virtuales cuando se crean desde el hipervisor manualmete se crean en modo NAT.
 
-<img src="assets/vms-net-config/Net_types.png" alt="Configuración de red: Modo NAT" width="100%" height="50%">
+<h4 align="center">Tipos de red disponibles en VirtualBox</h4>
+<p align="center">
+  <img src="assets/vms-net-config/Net_types.png" alt="Tipos de red disponibles en VirtualBox" width="95%" height="auto">
+</p>
 
 ---
 
@@ -248,20 +257,24 @@ El hipervisor gestiona su propia red interna a través de sus **tablas de NAT in
 
 El hipervisor gestiona su propia red interna a través de sus **tablas de NAT internas** y sus **tablas de PAT** (Port Address Translation). Además, actúa como **servidor DHCP**, asignando dinámicamente direcciones IP a las máquinas virtuales y proporcionando la puerta de enlace (gateway) por defecto para poder conectarse a redes fuera de su LAN.
 
-<img src="assets/vms-net-config/DHCP.png" alt="Configuración de red: Modo NAT" width="50%" height="50%">
+<h4 align="center">Asignacion DHCP dentro del modo NAT</h4>
+<p align="center">
+  <img src="assets/vms-net-config/DHCP.png" alt="Asignacion DHCP dentro del modo NAT" width="80%" height="auto">
+</p>
 
 Por defecto, todo el tráfico que sale de la VM hacia Internet **sale con la IP del host** (servidor) y el puerto que el hipervisor reserva dentro del host para abrir un socket y comunicarse con el exterior. Esto se hace gracias al **NAT interno** del hipervisor que, cuando recibe una respuesta de Internet, traduce la IP del host y el puerto del host al puerto y la IP de la VM que hizo la petición. Las entradas de la tabla de traducción NAT son efímeras y solo sirven para comunicarse como cliente con el exterior, no para exponer servicios al exterior.
 
 La manera de poder exponer servicios al exterior con este modo de red es a través de la **configuración de reglas de PAT** (Port Address Translation) en el hipervisor. Como la VM no tiene IP visible desde el host ni desde fuera del host, no podemos generar endpoints para que los clientes de un servidor alojado en ella se conecten. Con estas reglas lo solucionamos asociando un puerto endpoint del host (IP + puerto) a un endpoint de la VM (IP + puerto). Con esto podemos redirigir y controlar quién puede conectarse con la VM, actuando también como firewall para controlar el acceso a los servicios alojados en la VM.
 
-<img src="assets/vms-net-config/protfeorwarding_hypervisor.png" alt="Configuración de red: Modo NAT" height="50%" width="50%%">
+<h4 align="center">Redireccion de puertos desde el hipervisor</h4>
+<p align="center">
+  <img src="assets/vms-net-config/protfeorwarding_hypervisor.png" alt="Redireccion de puertos desde el hipervisor" width="80%" height="auto">
+</p>
 
 > ℹ️ **Más información sobre modo NAT en hipervisores:** Si quieres profundizar en el funcionamiento de estas tecnologías en el contexto de los hipervisores, puedes consultar:
 > [NAT, PAT y DHCP en hipervisores](https://broken-snowdrop-f03.notion.site/Modo-NAT-y-Port-forwarding-32db80eb3d8880dc922fea99a4f7a1e0)
 
 </details>
-
----
 
 ### Modo Bridge (Adaptador Puente)
 
@@ -276,7 +289,7 @@ En modo Bridge, la VM tiene entidad propia de red (IP y MAC). Esto permite que s
 <details>
 <summary><strong>Explicacion de modo Bridge</strong></summary>
 
-En modo Bridge, la VM tiene entidad propia de red y de dirección MAC. Esto permite que sea visible desde fuera del host y desde el propio host como un dispositivo independiente. El hipervisor crea una interfaz virtual en modo bridge que se incrusta en la tarjeta de red (NIC) del host, permitiendo que reciba tramas dirigidas a su propia MAC, además de la del host. Así, los paquetes de red no tienen que ser desempaquetados por la pila de red del host ni redirigidos mediante port forwarding.
+En modo Bridge, la VM tiene entidad propia de red y de dirección MAC. Esto permite que sea visible desde fuera del host y desde el propio host como un dispositivo independiente. El hipervisor conecta la vNIC de la VM a la interfaz física del host mediante un mecanismo de bridge o switch virtual. Aunque el tráfico sale físicamente por la NIC del host, las tramas Ethernet conservan la MAC de la VM, por lo que la máquina virtual aparece en la red como un dispositivo independiente a nivel de capa 2, permitiendo que reciba tramas dirigidas a su propia MAC, además de la del host. Así, los paquetes de red no tienen que ser desempaquetados por la pila de red del host ni redirigidos mediante port forwarding.
 
 **Esto tiene ventajas e inconvenientes:**
  - La **ventaja** es que, al ser visible como un dispositivo independiente, la VM puede comunicarse directamente con otros dispositivos en la red local y con Internet sin necesidad de configurar reglas de port forwarding y que el tráfico no tenga que pasar por la pila de red del host y se enrute por la MAC de la VMS **disminuye la latencia**. Esto es importante porque ciertos protocolos de comunicación, como VoIP o protocolos de descubrimiento, no funcionan bien con la latencia añadida por NAT o port forwarding.  Ademas se puede configurar la VM para que reciba una dirección **IP dinámica del router mediante DHCP**.
@@ -312,7 +325,9 @@ En infraestructuras de **IaaS (cloud), hosting y servidores de alta disponibilid
 <details>
 <summary><strong>Extra modo promiscuo en hipervisores (IDS/IPS, sniffer, Monitorización)</strong></summary>
 
-Normalmente, una tarjeta de red es "educada": si llega un paquete cuya dirección MAC de destino no es la suya, lo descarta inmediatamente a nivel de hardware para no molestar a la CPU. Al activar el modo promiscuo, le dices a la tarjeta: "Pásame absolutamente todo lo que pase por el cable (o el switch virtual), sea para mí o no". Esto es útil para:
+Normalmente, una tarjeta de red es "educada": si llega una trama cuya MAC de destino no corresponde con la suya, la descarta a nivel de hardware para no pasar tráfico innecesario a la CPU. En modo Bridge, aunque varias VMs puedan compartir la misma interfaz física del host, el hipervisor ya se encarga de entregar a cada vNIC las tramas que corresponden a su MAC.
+
+Al activar el modo promiscuo, se permite que una interfaz o una VM reciba también tráfico que no va dirigido específicamente a su propia MAC. Dicho de forma simple, le dices a la tarjeta o al switch virtual: "pásame también tráfico que normalmente descartarías". Esto es útil para:
 
 - **IDS/IPS (Intrusion Detection/Prevention Systems):** Para detectar ataques o comportamientos sospechosos en la red, el IDS necesita ver todo el tráfico. En modo promiscuo, puede analizar cada paquete que pasa por la red, incluso si no está dirigido a la VM, lo que es esencial para detectar amenazas.
 - **Sniffer de red:** Herramientas como Wireshark o tcpdump necesitan el modo promiscuo para capturar todo el tráfico de la red y analizarlo, lo que es crucial para troubleshooting, análisis forense o auditorías de seguridad.
@@ -379,7 +394,10 @@ A continuacion tienes utilidades practicas de VirtualBox en formato desplegable.
 
 Explica donde se guardan las VMs y como cambiar la ruta por defecto desde la configuracion global.
 
-<img src="assets/vms-extras/vm-location-preferences.png" alt="Preferencias de ubicacion de VMs" width="70%" height="auto">
+<h4 align="center">Preferencias de ubicacion de VMs</h4>
+<p align="center">
+  <img src="assets/vms-extras/vm-location-preferences.png" alt="Preferencias de ubicacion de VMs" width="85%" height="auto">
+</p>
 
 > ℹ️ **Mas informacion sobre ubicacion de VMs:**
 > [Localizacion de maquinas de VirtualBox](https://www.notion.so/330b80eb3d8880e0a545f401bd38d079)
@@ -396,12 +414,18 @@ Las instantaneas permiten volver a un estado anterior de la VM para pruebas, act
 
 Se pueden crear desde la interfaz grafica (imagen inferior).
 
-<img src="assets/vms-extras/snapshot-take.png" alt="Crear snapshot en VirtualBox" width="70%" height="auto">
+<h4 align="center">Crear una snapshot desde VirtualBox</h4>
+<p align="center">
+  <img src="assets/vms-extras/snapshot-take.png" alt="Crear snapshot en VirtualBox" width="85%" height="auto">
+</p>
 
 **Cambiar ubicacion por defecto y consultar donde se guardan**
 Desde la configuracion de la VM puedes definir el directorio por defecto de snapshots y ver su ruta actual.
 
-<img src="assets/vms-extras/snapshot-location.png" alt="Cambiar ubicacion de snapshots" width="70%" height="auto">
+<h4 align="center">Cambiar ubicacion de snapshots</h4>
+<p align="center">
+  <img src="assets/vms-extras/snapshot-location.png" alt="Cambiar ubicacion de snapshots" width="85%" height="auto">
+</p>
 
 > ℹ️ **Mas informacion sobre snapshots:**
 > [Snapshots en VirtualBox](https://www.notion.so/330b80eb3d8880e29f9dfebe17bb8a96)
@@ -423,17 +447,21 @@ Sirve para duplicar una VM ya configurada y crear entornos paralelos (testing, d
 
 Muestra el flujo recomendado para exportar VMs a **OVA**, moverlas entre equipos y mantener una **copia portable** del sistema. Es ideal para **backup**, **migraciones** o **compartir entornos** sin reinstalar.
 
+<h4 align="center">Exportar una VM a formato OVA</h4>
 <table>
 <tr>
-<td><img src="assets/vms-extras/export-ova-1.png" alt="Exportar VM a OVA" width="100%" height="auto"></td>
-<td><img src="assets/vms-extras/export-ova-2.png" alt="Opciones de exportacion OVA" width="100%" height="auto"></td>
+<td align="center"><img src="assets/vms-extras/export-ova-1.png" alt="Exportar VM a OVA" width="100%" height="auto"></td>
+<td align="center"><img src="assets/vms-extras/export-ova-2.png" alt="Opciones de exportacion OVA" width="100%" height="auto"></td>
 </tr>
 </table>
 
 **Como importar desde la OVA**
 Usa la opcion de importacion para registrar la VM en otro equipo y recrear su configuracion.
 
-<img src="assets/vms-extras/import-ova.png" alt="Importar VM desde OVA" width="70%" height="auto">
+<h4 align="center">Importar una VM desde una OVA</h4>
+<p align="center">
+  <img src="assets/vms-extras/import-ova.png" alt="Importar VM desde OVA" width="85%" height="auto">
+</p>
 
 > ℹ️ **Mas informacion sobre exportar VMs:**
 > [Como exportar maquinas de VirtualBox](https://www.notion.so/331b80eb3d8880a79857e346b1f8fbcd)
@@ -445,7 +473,10 @@ Usa la opcion de importacion para registrar la VM en otro equipo y recrear su co
 
 Organiza VMs por proyecto y permite encender o apagar entornos completos de una sola vez.
 
-<img src="assets/vms-extras/vm-groups.png" alt="Crear y gestionar grupos de VMs" width="70%" height="auto">
+<h4 align="center">Crear y gestionar grupos de VMs</h4>
+<p align="center">
+  <img src="assets/vms-extras/vm-groups.png" alt="Crear y gestionar grupos de VMs" width="85%" height="auto">
+</p>
 
 > ℹ️ **Mas informacion sobre grupos de VMs:**
 > [Para que sirve crear grupos de maquinas en VirtualBox](https://www.notion.so/330b80eb3d8880c2b53cc07ab82ce3cc)
@@ -457,7 +488,10 @@ Organiza VMs por proyecto y permite encender o apagar entornos completos de una 
 
 Indica como abrir la documentacion desde el propio cliente de VirtualBox y consultar recursos oficiales.
 
-<img src="assets/vms-extras/vbox-docs.png" alt="Acceso a documentacion de VirtualBox" width="70%" height="auto">
+<h4 align="center">Acceso a la documentacion de VirtualBox</h4>
+<p align="center">
+  <img src="assets/vms-extras/vbox-docs.png" alt="Acceso a documentacion de VirtualBox" width="85%" height="auto">
+</p>
 
 > ℹ️ **Mas informacion sobre documentacion:**
 > [Acceder a la documentacion de VirtualBox](https://www.notion.so/331b80eb3d88807f9c10cfe84712a6d3)
@@ -476,15 +510,307 @@ Herramientas como **Vagrant** usan estas carpetas para inyectar scripts de provi
 **Carpetas compartidas globales (todas las VMs del hipervisor)**
 Se configuran para que cualquier VM pueda acceder a la misma carpeta.
 
-<img src="assets/vms-extras/shared-folder-make-global.png" alt="Carpeta compartida global" width="70%" height="auto">
+<h4 align="center">Configurar una carpeta compartida global</h4>
+<p align="center">
+  <img src="assets/vms-extras/shared-folder-make-global.png" alt="Carpeta compartida global" width="85%" height="auto">
+</p>
 
 **Carpetas compartidas por maquina (solo una VM)**
 Se asocian a una VM concreta para aislar acceso y permisos.
 
-<img src="assets/vms-extras/shared-folder-create.png" alt="Carpeta compartida por maquina" width="70%" height="auto">
+<h4 align="center">Configurar una carpeta compartida por maquina</h4>
+<p align="center">
+  <img src="assets/vms-extras/shared-folder-create.png" alt="Carpeta compartida por maquina" width="85%" height="auto">
+</p>
 
 > ℹ️ **Mas informacion sobre carpetas compartidas:**
 > [Crear carpetas compartidas entre VMs y sistema host](https://www.notion.so/331b80eb3d888023858fde4fd5fd3add)
 
 </details>
 
+---
+
+## 🔐 Conexion segura a maquinas con SSH daemon (`sshd`)
+
+SSH es el protocolo mas usado para administrar maquinas Linux de forma remota mediante una conexion cifrada. En Debian, el servicio que acepta conexiones SSH entrantes se llama **OpenSSH Server** y el proceso que queda escuchando en la maquina es el **SSH daemon**, normalmente `sshd`.
+
+La idea es sencilla:
+
+- En el **servidor** se instala y configura `sshd` para que espere conexiones.
+- En el **cliente** se usa el comando `ssh` para conectarse.
+- La autenticacion puede hacerse con **contrasena** o con **claves publica/privada**.
+
+En VMs, servidores locales, sandboxes y entornos de infraestructura, SSH es una pieza base porque permite entrar a la maquina, lanzar comandos, copiar archivos y automatizar configuraciones sin usar la interfaz grafica.
+
+---
+
+### Instalar y activar el servidor SSH
+
+Si durante la instalacion de Debian marcaste **SSH Server**, OpenSSH Server ya deberia estar instalado. Esta opcion aparece en la seleccion de paquetes del instalador.
+
+<h4 align="center">Seleccion de SSH Server durante la instalacion</h4>
+<p align="center">
+  <img src="assets/instacion-manual-debian-server/image_25.png" alt="Seleccion de SSH Server durante la instalacion de Debian" width="85%" height="auto">
+</p>
+
+Si no se marco en la instalacion, se puede instalar despues desde el propio sistema.
+
+<details>
+<summary><strong>Snippets para instalar, comprobar y activar SSH</strong></summary>
+
+Instalar OpenSSH Server:
+
+```bash
+sudo apt update
+sudo apt install openssh-server
+```
+
+Comprobar el estado del servicio:
+
+```bash
+sudo systemctl status ssh
+```
+
+Activarlo y dejarlo arrancando automaticamente:
+
+```bash
+sudo systemctl enable --now ssh
+```
+
+El servicio queda escuchando por defecto en el puerto `22/TCP`.
+
+</details>
+
+---
+
+
+### Archivos importantes de SSH
+
+En el **servidor**:
+
+```bash
+/etc/ssh/sshd_config
+/etc/ssh/sshd_config.d/
+/etc/ssh/ssh_host_*
+~/.ssh/authorized_keys
+```
+
+- `/etc/ssh/sshd_config`: configuracion principal del daemon.
+- `/etc/ssh/sshd_config.d/`: configuraciones extra separadas.
+- `/etc/ssh/ssh_host_*`: claves que identifican al servidor frente a los clientes.
+- `~/.ssh/authorized_keys`: claves publicas autorizadas para entrar en ese usuario.
+
+En el **cliente**:
+
+```bash
+~/.ssh/id_ed25519
+~/.ssh/id_ed25519.pub
+~/.ssh/known_hosts
+~/.ssh/config
+```
+
+- `id_ed25519`: clave privada del cliente. No se comparte.
+- `id_ed25519.pub`: clave publica. Esta si se copia al servidor.
+- `known_hosts`: servidores conocidos por el cliente.
+- `config`: atajos de conexion para no escribir IP, usuario, puerto o clave cada vez.
+
+---
+
+### Configuracion del servidor en `/etc/ssh`
+
+La configuracion del daemon se guarda principalmente en:
+
+```bash
+/etc/ssh/sshd_config
+```
+
+En sistemas modernos tambien puede haber configuraciones separadas en:
+
+```bash
+/etc/ssh/sshd_config.d/
+```
+
+Este directorio permite crear archivos `.conf` separados para no tocar tanto el fichero principal.
+
+> ⚠️ Desde estos archivos gestionamos el **hardening del servicio `sshd`**: que usuarios pueden entrar, si se permite `root`, si se aceptan contrasenas o claves, que puerto escucha el daemon y que metodos de autenticacion quedan habilitados.
+
+<details>
+<summary><strong>Ejemplo de hardening basico de sshd</strong></summary>
+
+Crear un fichero separado:
+
+```bash
+sudo nano /etc/ssh/sshd_config.d/hardening.conf
+```
+
+Configuracion de ejemplo:
+
+```sshconfig
+Port 22
+PermitRootLogin no
+PubkeyAuthentication yes
+PasswordAuthentication no
+KbdInteractiveAuthentication no
+AllowUsers usuario
+```
+
+- `Port 22`: puerto donde `sshd` escucha conexiones.
+- `PermitRootLogin no`: evita entrar directamente como `root`.
+- `PubkeyAuthentication yes`: permite autenticacion con claves SSH.
+- `PasswordAuthentication no`: desactiva autenticacion por contrasena.
+- `KbdInteractiveAuthentication no`: desactiva otros metodos interactivos basados en contrasena.
+- `AllowUsers usuario`: limita que usuarios pueden conectarse.
+
+Validar la configuracion antes de recargar:
+
+```bash
+sudo sshd -t
+```
+
+Si no muestra errores:
+
+```bash
+sudo systemctl reload ssh
+```
+
+> ⚠️ Si vas a desactivar contrasenas, prueba primero que puedes entrar con claves SSH desde otra terminal. Asi evitas quedarte fuera de la maquina.
+
+</details>
+
+---
+
+### Autenticacion con contrasena
+
+Es el metodo mas simple: el cliente se conecta y el servidor pide la contrasena del usuario.
+
+> ⚠️ Este metodo obliga a interactuar manualmente con la maquina porque hay que escribir la contrasena. Sirve para laboratorios, primeras pruebas o entornos cerrados, pero **no es lo ideal para automatizar aprovisionamiento ni para servidores expuestos**.
+
+<details>
+<summary><strong>Snippets de conexion con contrasena</strong></summary>
+
+Conexion basica:
+
+```bash
+ssh usuario@IP_DEL_SERVIDOR
+```
+
+Ejemplo:
+
+```bash
+ssh debian@192.168.1.50
+```
+
+Permitir autenticacion por contrasena en `sshd_config`:
+
+```sshconfig
+PasswordAuthentication yes
+```
+
+</details>
+
+---
+
+### Autenticacion con claves publica/privada
+
+Este metodo es el mas usado para administracion real y automatizaciones. El cliente conserva una **clave privada** y el servidor guarda la **clave publica** dentro de `~/.ssh/authorized_keys`.
+
+<details>
+<summary><strong>Snippets para crear clave, copiarla y conectarse</strong></summary>
+
+Crear una clave en el cliente:
+
+```bash
+ssh-keygen -t ed25519 -C "debian-server"
+```
+
+Copiar la clave publica al servidor:
+
+```bash
+ssh-copy-id usuario@IP_DEL_SERVIDOR
+```
+
+Conectarse usando la clave:
+
+```bash
+ssh usuario@IP_DEL_SERVIDOR
+```
+
+Tambien se puede indicar una clave concreta:
+
+```bash
+ssh -i ~/.ssh/id_ed25519 usuario@IP_DEL_SERVIDOR
+```
+
+</details>
+
+> ⚠️ Este metodo permite automatizaciones porque no obliga a escribir la contrasena del usuario en cada conexion. Por eso se usa mucho en herramientas de aprovisionamiento y despliegue como **Vagrant**, **Ansible**, **Packer**, **cloud-init** o flujos de **IaC** donde se crea una maquina y despues se ejecutan scripts de configuracion sobre ella.
+
+<details>
+<summary><strong>Snippet de alias SSH para automatizar conexiones</strong></summary>
+
+Ejemplo de archivo `~/.ssh/config` en el cliente:
+
+```sshconfig
+Host debian-lab
+    HostName 192.168.1.50
+    User debian
+    Port 22
+    IdentityFile ~/.ssh/id_ed25519
+```
+
+Despues puedes conectarte con:
+
+```bash
+ssh debian-lab
+```
+
+</details>
+
+---
+
+### Snippets segun el modo de red de la VM
+
+El modo de red de VirtualBox cambia la forma de llegar al puerto SSH de la VM desde el cliente (host o exterior). Segun el modo de red, **la IP y el puerto a usar** en el comando `ssh` cambia.
+
+| Modo de red | Como conectarse por SSH |
+| --- | --- |
+| **NAT** | Necesita port forwarding del host a la VM. Ejemplo: `ssh -p 2222 usuario@127.0.0.1` |
+| **Bridge** | La VM tiene IP propia en la red. Ejemplo: `ssh usuario@IP_DE_LA_VM` |
+| **Host-Only** | Acceso desde el host a la IP de la red Host-Only. Ejemplo: `ssh usuario@192.168.56.10` |
+| **Internal Network** | Solo desde otra VM de la misma red interna, o usando un bastion/jump host. Ejemplo: `ssh -J usuario@IP_BASTION usuario@IP_VM_INTERNA` |
+
+---
+
+### Conectarse por SSH desde VS Code
+
+VS Code permite conectarse a una maquina remota usando SSH y trabajar con sus archivos como si fueran locales mediante la extension **Remote - SSH**.
+
+> Pendiente: insertar captura del flujo de conexion desde VS Code cuando este disponible.
+
+---
+
+### Buenas practicas
+
+- No permitir login directo como `root`.
+- Usar claves SSH para administracion habitual.
+- Desactivar contrasenas cuando las claves ya funcionen.
+- Limitar usuarios con `AllowUsers`.
+- Abrir el puerto SSH solo en la red necesaria.
+- Validar cambios con `sudo sshd -t` antes de recargar.
+- En servidores expuestos, combinar SSH con firewall, actualizaciones y revision de logs.
+
+---
+
+### SSH en automatizacion y aprovisionamiento
+
+Cuando una herramienta crea una VM o un servidor, normalmente necesita una forma de entrar para ejecutar comandos. SSH permite ese canal de administracion.
+
+Ejemplos habituales:
+
+- **Vagrant:** crea la VM, configura una clave SSH y entra para ejecutar scripts de provision.
+- **Ansible:** se conecta por SSH y aplica playbooks sin instalar agente en el servidor.
+- **Packer:** crea imagenes de sistema conectandose por SSH para instalar paquetes y dejar una imagen preparada.
+- **cloud-init:** configura usuarios, claves SSH, paquetes y scripts en el primer arranque de una VM cloud.
+- **Terraform/OpenTofu:** normalmente crea la infraestructura; despues puede delegar la configuracion en cloud-init, Ansible u otras herramientas.
+
+Por eso, en infraestructura, las claves SSH no son solo una forma comoda de entrar: son la base para automatizar el aprovisionamiento inicial de maquinas.
