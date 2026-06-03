@@ -19,8 +19,7 @@ Todo esto lleva al entendimiento de cómo hacer estos procesos manualmente desde
     <a href="#-configuración-de-red-de-máquinas-virtuales-desde-el-hipervisor">VMs Network</a> ·
     <a href="#-conexion-segura-a-maquinas-con-ssh-daemon-sshd">SSH Guide</a> ·
     <a href="#-guia-para-conectarse-por-ssh-desde-vscode">SSH + VSCode</a> ·
-    <a href="#-aprovisionamiento-e-iac-automatizando-la-creacion-y-configuracion-de-infraestructura
-">IaC</a>
+    <a href="#-automatizacion-de-infraestructura-aprovisionamiento-e-iac">IaC</a>
   </strong>
 </p>
 
@@ -1091,7 +1090,7 @@ Es especialmente util en entornos de infraestructura porque puedes administrar l
 
 
 
-# 🤖​ Automatizacion de Infraestructura/aprovisionamiento e IaC
+# 🤖​ Automatizacion de Infraestructura aprovisionamiento e IaC
 
 Todo el proceso que hemos visto hasta ahora en este repositorio (crear máquinas virtuales, configurar redes y realizar la instalación de Debian paso a paso) es fundamental para entender los cimientos de la infraestructura. Sin embargo, hacerlo de forma manual en el mundo real es un proceso **tedioso, lento y propenso a errores**.
 
