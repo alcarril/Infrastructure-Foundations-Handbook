@@ -1,5 +1,11 @@
 
+# Infrastructure-Foundations-Handbook
 
+<p align="center">
+  <img src="assets/portada.jpeg" alt="Cuentamemas" width="60%" height="auto">
+</p>
+
+<br>
 
 ## Overview
 
@@ -1194,12 +1200,9 @@ Sabiendo ya cuáles son las bases de IaC y cómo encajan en el flujo **DevOps**,
 | **Proxmox VE** | Hipervisor open-source (KVM/LXC) con API y CLI nativas. | Para montar un centro de datos virtual propio en servidores físicos locales. |
 | **VMware (ESXi)** | Hipervisor corporativo tradicional basado en API robusta. | Para gestionar clusters virtuales empresariales masivos de alta disponibilidad. |
 
----
-
-<br>
-
-# TU depues de leer esto
-
 <p align="center">
   <img src="assets/cuentamemas.jpg" alt="Cuentamemas" width="50%" height="auto">
 </p>
+
+---
+
