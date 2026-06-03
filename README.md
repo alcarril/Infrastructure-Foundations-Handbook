@@ -13,13 +13,13 @@ Todo esto lleva al entendimiento de cómo hacer estos procesos manualmente desde
 
 <p align="center">
   <strong>
-    <a href="#instalacion-de-debian-servers">Debian Server Guide</a> ·
-    <a href="#tipos-avanzados-de-instalacion-de-debian-server">Advanced Install</a> ·
-    <a href="#maquinas-virtuales-vms">VMs Guide</a> ·
-    <a href="#configuracion-de-red-de-maquinas-virtuales-desde-el-hipervisor">VMs Network</a> ·
-    <a href="#conexion-segura-a-maquinas-con-ssh-daemon-sshd">SSH Guide</a> ·
-    <a href="#guia-para-conectarse-desde-vscode">SSH + VSCode</a> ·
-    <a href="#el-paso-logico-de-lo-manual-a-la-automatizacion">IaC</a>
+    <a href="#-instalacion-de-debian-servers">Debian Server Guide</a> ·
+    <a href="#-instalaciones-avanzadas-de-debian-server">Advanced Install</a> ·
+    <a href="#-máquinas-virtuales-vms">VMs Guide</a> ·
+    <a href="#-configuración-de-red-de-máquinas-virtuales-desde-el-hipervisor">VMs Network</a> ·
+    <a href="#-conexion-segura-a-maquinas-con-ssh-daemon-sshd">SSH Guide</a> ·
+    <a href="#-guia-para-conectarse-desde-vscode">SSH + VSCode</a> ·
+    <a href="#el-paso-lógico-de-lo-manual-a-la-automatización">IaC</a>
   </strong>
 </p>
 
@@ -302,13 +302,13 @@ d-i pkgsel/upgrade select safe-upgrade
 # Comando tardío (Late Command) para inyectar configuración post-instalación
 # Aquí se crea el directorio .ssh, se añade la clave pública y se levanta el servicio HTTPS
 d-i preseed/late_command string \
-    in-target mkdir -p /home/sysadmin/.ssh; \
-    echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJuYourPublicSSHKeyHere sysadmin@provision" > /target/home/sysadmin/.ssh/authorized_keys; \
-    in-target chown -R sysadmin:sysadmin /home/sysadmin/.ssh; \
-    in-target chmod 700 /home/sysadmin/.ssh; \
-    in-target chmod 600 /home/sysadmin/.ssh/authorized_keys; \
-    in-target systemctl enable ssh; \
-    in-target systemctl enable nginx
+	in-target mkdir -p /home/sysadmin/.ssh; \
+	echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJuYourPublicSSHKeyHere sysadmin@provision" > /target/home/sysadmin/.ssh/authorized_keys; \
+	in-target chown -R sysadmin:sysadmin /home/sysadmin/.ssh; \
+	in-target chmod 700 /home/sysadmin/.ssh; \
+	in-target chmod 600 /home/sysadmin/.ssh/authorized_keys; \
+	in-target systemctl enable ssh; \
+	in-target systemctl enable nginx
 ```
 
 > ⚠️ En entornos reales las contraseñas no se ponen en texto plano, se usan **hashes**. Un solo error en el nombre de una variable hará que el instalador se detenga en esa pantalla.
@@ -386,7 +386,7 @@ Son las configuraciones de los núcleos de CPU, la RAM y la memoria en el disco 
 ![Configuración de Disco](assets/vms-creation-config/vm_04_disk.png)
 
 ---
-## ​🔧​ Tipos de instalación
+## 🔧 Tipos de instalación
 
 ### 1. Instalación desatendida
 
@@ -405,7 +405,7 @@ Después de los pasos previos, le damos a "finish" y comienza la instalación de
 
 ---
 
-## 🌐​ Configuración de red de máquinas virtuales desde el hipervisor
+## 🌐 Configuración de red de máquinas virtuales desde el hipervisor
 
 Cuando creas una maquina virtual desde el hipervisor puedes elegir que modo de Red quieres usar para concestar las Vms con la Red. Segun el modo de de seleccionado el comportamiento interno de la Red, el alcanace, la forma de conctar con el host (servidor) y con elxterior que est ajecutando el hipervisor es distinta y cada uno esta destinado a un uso diferente. Por defecto las maquinas virtuales cuando se crean desde el hipervisor manualmete se crean en modo NAT.
 
@@ -961,7 +961,7 @@ El modo de red de VirtualBox cambia la forma de llegar al puerto SSH de la VM de
 
 ---
 
-## 🔌📺​ Guia para conectarse desde VSCode
+## 🔌📺 Guia para conectarse desde VSCode
 
 
 
