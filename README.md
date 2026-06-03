@@ -195,7 +195,7 @@ Modo con **control total** sobre cada fase de la instalación. A diferencia del 
 - **GRUB:** Controlar exactamente dónde y cómo se instala el cargador de arranque.
 
 > ⚠️ **Indicado para administradores con hardware muy específico**, servidores con RAID/LVM avanzado o sistemas ultra-ligeros donde se busca reducir la superficie de ataque.
-<div align="center">
+<div align="left">
 	<img src="assets/instalacion-avanzada-debian/expert-options.png" alt="Opciones específicas del modo experto" width="80%" />
 	<br>
 	<sup> Interfaz avanzada del instalador donde se exponen los menús de configuración específicos del Modo Experto.</sup>
@@ -304,7 +304,7 @@ El instalador solicita la ruta exacta donde se encuentra localizado este archivo
 * **Ruta no local:** A través de un servidor web remoto en la red utilizando el protocolo HTTP (`http://...`).
 * **Ruta local:** Apuntando directamente al archivo guardado dentro del propio medio de almacenamiento o USB físico (`file://...`).
 
-<div align="center">
+<div align="left">
 	<img src="assets/instalacion-avanzada-debian/preseed-autoinstall.png" alt="Instalación desatendida desde el hipervisor" width="95%" />
 	<br>
 	<sup>Proceso de carga de la instalación desatendida y automatizada desde el entorno del hipervisor.</sup>
@@ -391,8 +391,8 @@ Después de los pasos previos, le damos a "finish" y comienza la instalación de
 
 Cuando creas una maquina virtual desde el hipervisor puedes elegir que modo de Red quieres usar para concestar las Vms con la Red. Segun el modo de de seleccionado el comportamiento interno de la Red, el alcanace, la forma de conctar con el host (servidor) y con elxterior que est ajecutando el hipervisor es distinta y cada uno esta destinado a un uso diferente. Por defecto las maquinas virtuales cuando se crean desde el hipervisor manualmete se crean en modo NAT.
 
-<h4 align="center">Tipos de red disponibles en VirtualBox</h4>
-<p align="center">
+<h4 align="left">Tipos de red disponibles en VirtualBox</h4>
+<p align="left">
   <img src="assets/vms-net-config/Net_types.png" alt="Tipos de red disponibles en VirtualBox" width="95%" height="auto">
 </p>
 
@@ -413,8 +413,8 @@ El hipervisor gestiona su propia red interna a través de sus **tablas de NAT in
 
 El hipervisor gestiona su propia red interna a través de sus **tablas de NAT internas** y sus **tablas de PAT** (Port Address Translation). Además, actúa como **servidor DHCP**, asignando dinámicamente direcciones IP a las máquinas virtuales y proporcionando la puerta de enlace (gateway) por defecto para poder conectarse a redes fuera de su LAN.
 
-<h4 align="center">Asignacion DHCP dentro del modo NAT</h4>
-<p align="center">
+<h4 align="left">Asignacion DHCP dentro del modo NAT</h4>
+<p align="left">
   <img src="assets/vms-net-config/DHCP.png" alt="Asignacion DHCP dentro del modo NAT" width="80%" height="auto">
 </p>
 
@@ -422,8 +422,8 @@ Por defecto, todo el tráfico que sale de la VM hacia Internet **sale con la IP 
 
 La manera de poder exponer servicios al exterior con este modo de red es a través de la **configuración de reglas de PAT** (Port Address Translation) en el hipervisor. Como la VM no tiene IP visible desde el host ni desde fuera del host, no podemos generar endpoints para que los clientes de un servidor alojado en ella se conecten. Con estas reglas lo solucionamos asociando un puerto endpoint del host (IP + puerto) a un endpoint de la VM (IP + puerto). Con esto podemos redirigir y controlar quién puede conectarse con la VM, actuando también como firewall para controlar el acceso a los servicios alojados en la VM.
 
-<h4 align="center">Redireccion de puertos desde el hipervisor</h4>
-<p align="center">
+<h4 align="left">Redireccion de puertos desde el hipervisor</h4>
+<p align="left">
   <img src="assets/vms-net-config/protfeorwarding_hypervisor.png" alt="Redireccion de puertos desde el hipervisor" width="80%" height="auto">
 </p>
 
@@ -552,8 +552,8 @@ A continuacion tienes utilidades practicas de VirtualBox en formato desplegable.
 
 Explica donde se guardan las VMs y como cambiar la ruta por defecto desde la configuracion global.
 
-<h4 align="center">Preferencias de ubicacion de VMs</h4>
-<p align="center">
+<h4 align="left">Preferencias de ubicacion de VMs</h4>
+<p align="left">
   <img src="assets/vms-extras/vm-location-preferences.png" alt="Preferencias de ubicacion de VMs" width="85%" height="auto">
 </p>
 
@@ -572,16 +572,16 @@ Las instantaneas permiten volver a un estado anterior de la VM para pruebas, act
 
 Se pueden crear desde la interfaz grafica (imagen inferior).
 
-<h4 align="center">Crear una snapshot desde VirtualBox</h4>
-<p align="center">
+<h4 align="left">Crear una snapshot desde VirtualBox</h4>
+<p align="left">
   <img src="assets/vms-extras/snapshot-take.png" alt="Crear snapshot en VirtualBox" width="85%" height="auto">
 </p>
 
 **Cambiar ubicacion por defecto y consultar donde se guardan**
 Desde la configuracion de la VM puedes definir el directorio por defecto de snapshots y ver su ruta actual.
 
-<h4 align="center">Cambiar ubicacion de snapshots</h4>
-<p align="center">
+<h4 align="left">Cambiar ubicacion de snapshots</h4>
+<p align="left">
   <img src="assets/vms-extras/snapshot-location.png" alt="Cambiar ubicacion de snapshots" width="85%" height="auto">
 </p>
 
@@ -605,19 +605,19 @@ Sirve para duplicar una VM ya configurada y crear entornos paralelos (testing, d
 
 Muestra el flujo recomendado para exportar VMs a **OVA**, moverlas entre equipos y mantener una **copia portable** del sistema. Es ideal para **backup**, **migraciones** o **compartir entornos** sin reinstalar.
 
-<h4 align="center">Exportar una VM a formato OVA</h4>
+<h4 align="left">Exportar una VM a formato OVA</h4>
 <table>
 <tr>
-<td align="center"><img src="assets/vms-extras/export-ova-1.png" alt="Exportar VM a OVA" width="100%" height="auto"></td>
-<td align="center"><img src="assets/vms-extras/export-ova-2.png" alt="Opciones de exportacion OVA" width="100%" height="auto"></td>
+<td align="left"><img src="assets/vms-extras/export-ova-1.png" alt="Exportar VM a OVA" width="100%" height="auto"></td>
+<td align="left"><img src="assets/vms-extras/export-ova-2.png" alt="Opciones de exportacion OVA" width="100%" height="auto"></td>
 </tr>
 </table>
 
 **Como importar desde la OVA**
 Usa la opcion de importacion para registrar la VM en otro equipo y recrear su configuracion.
 
-<h4 align="center">Importar una VM desde una OVA</h4>
-<p align="center">
+<h4 align="left">Importar una VM desde una OVA</h4>
+<p align="left">
   <img src="assets/vms-extras/import-ova.png" alt="Importar VM desde OVA" width="85%" height="auto">
 </p>
 
@@ -631,8 +631,8 @@ Usa la opcion de importacion para registrar la VM en otro equipo y recrear su co
 
 Organiza VMs por proyecto y permite encender o apagar entornos completos de una sola vez.
 
-<h4 align="center">Crear y gestionar grupos de VMs</h4>
-<p align="center">
+<h4 align="left">Crear y gestionar grupos de VMs</h4>
+<p align="left">
   <img src="assets/vms-extras/vm-groups.png" alt="Crear y gestionar grupos de VMs" width="85%" height="auto">
 </p>
 
@@ -646,8 +646,8 @@ Organiza VMs por proyecto y permite encender o apagar entornos completos de una 
 
 Indica como abrir la documentacion desde el propio cliente de VirtualBox y consultar recursos oficiales.
 
-<h4 align="center">Acceso a la documentacion de VirtualBox</h4>
-<p align="center">
+<h4 align="left">Acceso a la documentacion de VirtualBox</h4>
+<p align="left">
   <img src="assets/vms-extras/vbox-docs.png" alt="Acceso a documentacion de VirtualBox" width="85%" height="auto">
 </p>
 
@@ -668,16 +668,16 @@ Herramientas como **Vagrant** usan estas carpetas para inyectar scripts de provi
 **Carpetas compartidas globales (todas las VMs del hipervisor)**
 Se configuran para que cualquier VM pueda acceder a la misma carpeta.
 
-<h4 align="center">Configurar una carpeta compartida global</h4>
-<p align="center">
+<h4 align="left">Configurar una carpeta compartida global</h4>
+<p align="left">
   <img src="assets/vms-extras/shared-folder-make-global.png" alt="Carpeta compartida global" width="85%" height="auto">
 </p>
 
 **Carpetas compartidas por maquina (solo una VM)**
 Se asocian a una VM concreta para aislar acceso y permisos.
 
-<h4 align="center">Configurar una carpeta compartida por maquina</h4>
-<p align="center">
+<h4 align="left">Configurar una carpeta compartida por maquina</h4>
+<p align="left">
   <img src="assets/vms-extras/shared-folder-create.png" alt="Carpeta compartida por maquina" width="85%" height="auto">
 </p>
 
@@ -708,8 +708,8 @@ En VMs, servidores locales, sandboxes y entornos de infraestructura, SSH es una 
 
 Si durante la instalacion de Debian marcaste **SSH Server**, OpenSSH Server ya deberia estar instalado. Esta opcion aparece en la seleccion de paquetes del instalador.
 
-<h4 align="center">Seleccion de SSH Server durante la instalacion</h4>
-<p align="center">
+<h4 align="left">Seleccion de SSH Server durante la instalacion</h4>
+<p align="left">
   <img src="assets/instacion-manual-debian-server/image_25.png" alt="Seleccion de SSH Server durante la instalacion de Debian" width="85%" height="auto">
 </p>
 
@@ -928,7 +928,29 @@ ssh debian-lab
 
 ---
 
-### Snippets segun el modo de red de la VM
+
+### Buenas practicas
+
+- No permitir login directo como `root`.
+- Usar claves SSH para administracion habitual.
+- Desactivar contrasenas cuando las claves ya funcionen.
+- Limitar usuarios con `AllowUsers`.
+- Abrir el puerto SSH solo en la red necesaria.
+- Validar cambios con `sudo sshd -t` antes de recargar.
+- En servidores expuestos, combinar SSH con firewall, actualizaciones y revision de logs.
+
+---
+> ℹ️ **Mas informacion sobre SSH y OpenSSH Server:** Puedes leer mas detalles sobre el protocolo SSH y el servicio `sshd` en:
+> [SSH y OpenSSH Server](https://broken-snowdrop-f03.notion.site/Ssh-y-Open-Ssh-server-32db80eb3d888029b02cdf35de595184)
+
+> ℹ️ **Mas informacion sobre configuracion de OpenSSH Server:** Puedes ver opciones de configuracion y ajustes del servicio `sshd` en:
+> [Servicio OpenSSH Server](https://broken-snowdrop-f03.notion.site/Servicio-Openssh-server-32db80eb3d8880a583d0e348a3b2640e?pvs=74)
+
+---
+
+
+## 🔌🧩 Conexiones SSH desde host a VM segun modo de red
+
 
 El modo de red de VirtualBox cambia la forma de llegar al puerto SSH de la VM desde el cliente (host o exterior). Segun el modo de red, **la IP y el puerto a usar** en el comando `ssh` cambia.
 
@@ -941,96 +963,80 @@ El modo de red de VirtualBox cambia la forma de llegar al puerto SSH de la VM de
 
 ---
 
-### Conectarse por SSH desde VS Code
+## 🔌📺​ Guia para conectarse desde VSCode
+
+
 
 La extension **Remote - SSH** de VS Code permite abrir una sesion SSH dentro del propio editor y trabajar con el arbol de directorios, archivos y terminal de la maquina remota como si estuvieras en local. En lugar de usar la terminal para editar con `nano` o `vim`, tienes todo el IDE: resaltado de sintaxis, autocompletado, control de versiones, terminal integrada y explorador de archivos grafico apuntando al servidor remoto.
 
 Es especialmente util en entornos de infraestructura porque puedes administrar la configuracion de varias VMs desde una sola ventana, editar archivos de configuracion (como `/etc/ssh/sshd_config` o scripts en `/usr/local/bin/`), lanzar comandos y hacer deploy sin salir del editor. Es una alternativa mucho mas agil que el SSH clasico por terminal cuando necesitas modificar varios archivos o entender la estructura del sistema de forma visual.
 
 <details>
-<summary><strong>Guia de conexion paso a paso (Remote - SSH)</strong></summary>
+<summary><strong>📋 Guia de conexion paso a paso (Remote - SSH) — haz clic para desplegar</strong></summary>
 
 <br>
 
-Busca la extension **Remote - SSH** de Microsoft en el panel de extensiones de VS Code.
+### **1.** Busca la extension **Remote - SSH** de Microsoft en el panel de extensiones de VS Code.
 
-<p align="center">
-  <img src="assets/ssh-vscode/ssh_eleccion_extension.png" alt="Buscar extension Remote SSH" width="80%" height="auto">
+<p align="left">
+  <img src="assets/ssh-vscode/elecciondeextension.png" alt="Buscar extension Remote SSH" width="40%" height="auto">
 </p>
 
-Instala la extension y espera a que termine la descarga.
+### **2.** Instala la extension y espera a que termine la descarga.
 
-<p align="center">
-  <img src="assets/ssh-vscode/ssh_instalar_extension.png" alt="Instalar extension Remote SSH" width="80%" height="auto">
+<p align="left">
+  <img src="assets/ssh-vscode/ssh_instalar_extension.png" alt="Instalar extension Remote SSH" width="64%" height="auto">
 </p>
 
-Abre la paleta de conexion SSH desde la esquina inferior izquierda (icono verde de conexion remota).
+### **3.** Abre la paleta de conexion SSH desde la esquina inferior izquierda (icono verde de conexion remota).
 
-<p align="center">
-  <img src="assets/ssh-vscode/ssh_abir_paleta_conexion.png" alt="Abrir paleta de conexion SSH" width="80%" height="auto">
+<p align="left">
+  <img src="assets/ssh-vscode/ssh_abir_paleta_conexion.png" alt="Abrir paleta de conexion SSH" width="40%" height="auto">
 </p>
 
-Selecciona **"Add New SSH Host..."** para registrar una nueva conexion.
+### **4.** Se abre el menu de conexiones remotas. Aqui podemos anadir hosts, configurarlos, conectar con contenedores Docker y mas. Selecciona **"Add New SSH Host..."**.
 
-<p align="center">
-  <img src="assets/ssh-vscode/ssh_añadirhost.png" alt="Anadir nuevo host SSH" width="80%" height="auto">
+<p align="left">
+  <img src="assets/ssh-vscode/ssh_menudeconexion.png" alt="Menu de conexiones remotas" width="40%" height="auto">
 </p>
 
-Escribe el comando de conexion en formato `usuario@IP` (ej. `debian@192.168.1.50`) y confirma.
+### **5.** Selecciona **"Add New SSH Host..."** para registrar una nueva conexion.
 
-<p align="center">
-  <img src="assets/ssh-vscode/ssh_poner_ususarioiphost.png" alt="Poner usuario e IP del host" width="80%" height="auto">
+<p align="left">
+  <img src="assets/ssh-vscode/ssh_añadirhost.png" alt="Anadir nuevo host SSH" width="40%" height="auto">
 </p>
 
-Elige el fichero de configuracion SSH donde guardar los datos del host (normalmente `~/.ssh/config`).
+### **6.** Escribe el comando de conexion en formato `usuario@IP` (ej. `debian@192.168.1.50`) y confirma.
 
-<p align="center">
-  <img src="assets/ssh-vscode/ssh_elegirficheroclavesconfig.png" alt="Elegir fichero de config SSH" width="80%" height="auto">
+<p align="left">
+  <img src="assets/ssh-vscode/ssh_poner_ususarioiphost.png" alt="Poner usuario e IP del host" width="40%" height="auto">
 </p>
 
-VS Code muestra una notificacion confirmando que el host se ha añadido correctamente.
+### **7.** Elige el fichero de configuracion SSH donde guardar los datos del host (normalmente `~/.ssh/config`).
 
-<p align="center">
-  <img src="assets/ssh-vscode/ssh_host aded.png" alt="Host anadido correctamente" width="80%" height="auto">
+<p align="left">
+  <img src="assets/ssh-vscode/ssh_elegirficheroclavesconfig.png" alt="Elegir fichero de config SSH" width="40%" height="auto">
 </p>
 
-Desde la misma paleta de conexion, selecciona el host recien creado para iniciar la conexion.
+### **8.** VS Code muestra una notificacion confirmando que el host se ha añadido. Desde este mensaje puedes **iniciar la conexion** directamente o **abrir la configuracion** del host para editarla.
 
-<p align="center">
-  <img src="assets/ssh-vscode/ssh_conectar_despuesdeañadir.png" alt="Conectar al host anadido" width="80%" height="auto">
+<p align="left">
+  <img src="assets/ssh-vscode/ssh_host aded.png" alt="Host anadido correctamente" width="40%" height="auto">
 </p>
 
-VS Code abre una nueva ventana y establece el tunnel SSH contra la maquina remota.
+### **9.** Si elegiste **"Config"** en la notificacion, se abre este menu donde puedes seleccionar **"Connect to Host..."** para iniciar la conexion.
 
-<p align="center">
-  <img src="assets/ssh-vscode/ssh_conectarse.png" alt="Establecer conexion SSH" width="80%" height="auto">
+<p align="left">
+  <img src="assets/ssh-vscode/mewmenu.png" alt="Menu para conectar al host" width="40%" height="auto">
 </p>
 
-Aparece el mensaje de conexion establecida y el icono inferior izquierdo cambia a verde con el nombre del host.
+### **10.** Tanto si conectaste desde la notificacion como desde el menu de configuracion, la ventana renderiza el arbol de directorios de la maquina remota con la barra inferior en verde, permitiendo explorar, editar y gestionar archivos con todas las capacidades del IDE.
 
-<p align="center">
-  <img src="assets/ssh-vscode/ssh_menudeconexion.png" alt="Conexion SSH establecida" width="80%" height="auto">
-</p>
-
-La ventana renderiza el arbol de directorios de la maquina remota, permitiendo explorar, editar y gestionar archivos con todas las capacidades del IDE.
-
-<p align="center">
-  <img src="assets/ssh-vscode/ssh_conexioncreadaemventana.png" alt="Arbol de directorios remoto en VS Code" width="80%" height="auto">
+<p align="left">
+  <img src="assets/ssh-vscode/ssh_conexioncreadaemventana.png" alt="Arbol de directorios remoto en VS Code" width="40%" height="auto">
 </p>
 
 </details>
-
----
-
-### Buenas practicas
-
-- No permitir login directo como `root`.
-- Usar claves SSH para administracion habitual.
-- Desactivar contrasenas cuando las claves ya funcionen.
-- Limitar usuarios con `AllowUsers`.
-- Abrir el puerto SSH solo en la red necesaria.
-- Validar cambios con `sudo sshd -t` antes de recargar.
-- En servidores expuestos, combinar SSH con firewall, actualizaciones y revision de logs.
 
 ---
 
@@ -1047,3 +1053,6 @@ Ejemplos habituales:
 - **Terraform/OpenTofu:** normalmente crea la infraestructura; despues puede delegar la configuracion en cloud-init, Ansible u otras herramientas.
 
 Por eso, en infraestructura, las claves SSH no son solo una forma comoda de entrar: son la base para automatizar el aprovisionamiento inicial de maquinas.
+
+---
+
