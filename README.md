@@ -2,7 +2,7 @@
 # Infrastructure-Foundations-Handbook
 
 <p align="center">
-  <img src="assets/portada.jpeg" alt="Cuentamemas" width="100%" height="auto">
+  <img src="assets/portada.jpeg" alt="Cuentamemas" width="90%" height="auto">
 </p>
 
 
