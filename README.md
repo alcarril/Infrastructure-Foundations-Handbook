@@ -158,7 +158,7 @@ Opción avanzada de red.
 
 
 
-## 🧠 Tipos avanzados de instalación de Debian Server
+## 🔴 Instalaciones avanzadas de Debian Server
 
 Además de la instalación manual estándar, el menú de arranque del instalador de Debian ofrece otras opciones más avanzadas pensadas para accesibilidad, recuperación, control total o automatización:
 
