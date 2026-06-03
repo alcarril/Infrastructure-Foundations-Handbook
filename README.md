@@ -943,9 +943,82 @@ El modo de red de VirtualBox cambia la forma de llegar al puerto SSH de la VM de
 
 ### Conectarse por SSH desde VS Code
 
-VS Code permite conectarse a una maquina remota usando SSH y trabajar con sus archivos como si fueran locales mediante la extension **Remote - SSH**.
+La extension **Remote - SSH** de VS Code permite abrir una sesion SSH dentro del propio editor y trabajar con el arbol de directorios, archivos y terminal de la maquina remota como si estuvieras en local. En lugar de usar la terminal para editar con `nano` o `vim`, tienes todo el IDE: resaltado de sintaxis, autocompletado, control de versiones, terminal integrada y explorador de archivos grafico apuntando al servidor remoto.
 
-> Pendiente: insertar captura del flujo de conexion desde VS Code cuando este disponible.
+Es especialmente util en entornos de infraestructura porque puedes administrar la configuracion de varias VMs desde una sola ventana, editar archivos de configuracion (como `/etc/ssh/sshd_config` o scripts en `/usr/local/bin/`), lanzar comandos y hacer deploy sin salir del editor. Es una alternativa mucho mas agil que el SSH clasico por terminal cuando necesitas modificar varios archivos o entender la estructura del sistema de forma visual.
+
+<details>
+<summary><strong>Guia de conexion paso a paso (Remote - SSH)</strong></summary>
+
+<br>
+
+Busca la extension **Remote - SSH** de Microsoft en el panel de extensiones de VS Code.
+
+<p align="center">
+  <img src="assets/ssh-vscode/ssh_eleccion_extension.png" alt="Buscar extension Remote SSH" width="80%" height="auto">
+</p>
+
+Instala la extension y espera a que termine la descarga.
+
+<p align="center">
+  <img src="assets/ssh-vscode/ssh_instalar_extension.png" alt="Instalar extension Remote SSH" width="80%" height="auto">
+</p>
+
+Abre la paleta de conexion SSH desde la esquina inferior izquierda (icono verde de conexion remota).
+
+<p align="center">
+  <img src="assets/ssh-vscode/ssh_abir_paleta_conexion.png" alt="Abrir paleta de conexion SSH" width="80%" height="auto">
+</p>
+
+Selecciona **"Add New SSH Host..."** para registrar una nueva conexion.
+
+<p align="center">
+  <img src="assets/ssh-vscode/ssh_añadirhost.png" alt="Anadir nuevo host SSH" width="80%" height="auto">
+</p>
+
+Escribe el comando de conexion en formato `usuario@IP` (ej. `debian@192.168.1.50`) y confirma.
+
+<p align="center">
+  <img src="assets/ssh-vscode/ssh_poner_ususarioiphost.png" alt="Poner usuario e IP del host" width="80%" height="auto">
+</p>
+
+Elige el fichero de configuracion SSH donde guardar los datos del host (normalmente `~/.ssh/config`).
+
+<p align="center">
+  <img src="assets/ssh-vscode/ssh_elegirficheroclavesconfig.png" alt="Elegir fichero de config SSH" width="80%" height="auto">
+</p>
+
+VS Code muestra una notificacion confirmando que el host se ha añadido correctamente.
+
+<p align="center">
+  <img src="assets/ssh-vscode/ssh_host aded.png" alt="Host anadido correctamente" width="80%" height="auto">
+</p>
+
+Desde la misma paleta de conexion, selecciona el host recien creado para iniciar la conexion.
+
+<p align="center">
+  <img src="assets/ssh-vscode/ssh_conectar_despuesdeañadir.png" alt="Conectar al host anadido" width="80%" height="auto">
+</p>
+
+VS Code abre una nueva ventana y establece el tunnel SSH contra la maquina remota.
+
+<p align="center">
+  <img src="assets/ssh-vscode/ssh_conectarse.png" alt="Establecer conexion SSH" width="80%" height="auto">
+</p>
+
+Aparece el mensaje de conexion establecida y el icono inferior izquierdo cambia a verde con el nombre del host.
+
+<p align="center">
+  <img src="assets/ssh-vscode/ssh_menudeconexion.png" alt="Conexion SSH establecida" width="80%" height="auto">
+</p>
+
+La ventana renderiza el arbol de directorios de la maquina remota, permitiendo explorar, editar y gestionar archivos con todas las capacidades del IDE.
+
+<p align="center">
+  <img src="assets/ssh-vscode/ssh_conexioncreadaemventana.png" alt="Arbol de directorios remoto en VS Code" width="80%" height="auto">
+</p>
+
+</details>
 
 ---
 
@@ -974,14 +1047,3 @@ Ejemplos habituales:
 - **Terraform/OpenTofu:** normalmente crea la infraestructura; despues puede delegar la configuracion en cloud-init, Ansible u otras herramientas.
 
 Por eso, en infraestructura, las claves SSH no son solo una forma comoda de entrar: son la base para automatizar el aprovisionamiento inicial de maquinas.
-
-
-
-> 🔧 **Pieza clave en automatización e IaC**
->
-> Esta técnica es la base de herramientas como **Vagrant**, **cloud-init**, **autoinstall** y flujos de **Ansible/Packer/Terraform**. El patrón general es siempre el mismo:
->
-> 1. El hipervisor o herramienta inicia la instalación con un `preseed.cfg` que configura red, usuario, clave SSH y `sudo`.
-> 2. La máquina arranca y queda accesible por SSH desde el host.
-> 3. El host ejecuta scripts de aprovisionamiento (`provision.sh`) que instalan paquetes, ajustan servicios y aplican hardening.
-> 4. Al finalizar, los scripts eliminan al usuario de provisioning, dejando la máquina lista para el cliente.
