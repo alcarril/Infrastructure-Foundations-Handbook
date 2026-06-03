@@ -3,9 +3,28 @@
 
 ## Overview
 
-Este repositorio recoge una guia practica para entender las bases de una infraestructura de servidor desde cero: instalacion de Debian Server, decisiones de particionado, uso de LVM, cifrado con LUKS y configuraciones pensadas tanto para entornos locales de laboratorio como para servidores modestos expuestos al publico.
+Guía práctica para aprender a construir infraestructura desde cero, aplicable tanto a máquinas virtuales como a servidores Debian en entornos de laboratorio o producción ligera, incluyendo escenarios más avanzados como sistemas cifrados o configuraciones base para servicios remotos.
 
-Tambien cubre la creacion de maquinas virtuales con VirtualBox, sus modos de red y las configuraciones necesarias para montar sandboxes, entornos de desarrollo, pruebas de servicios, pequenas arquitecturas de backend, exponer un servicio o simplemente tener un SO aislado. La idea es conocer primero como funcionan estas piezas manualmente para entender mejor las herramientas que las automatizan o envuelven despues, como Vagrant, plataformas IaaS o herramientas de infraestructura como codigo.
+Cubre la instalación de Debian Server con opciones como particionado, LVM, cifrado con LUKS e instalaciones desatendidas o preconfiguradas (preseed), junto con decisiones de configuración según el entorno de uso.
+
+Incluye la creación y gestión de máquinas virtuales en VirtualBox, con modos de red (NAT, bridge, host-only, internal), asignación de recursos y escenarios típicos como sandboxes, entornos de desarrollo, pruebas de servicios o pequeñas arquitecturas de backend, junto con una sección de SSH como herramienta base de administración remota y gestión de sistemas.
+
+El objetivo es entender de forma práctica cómo se construye infraestructura manualmente y reutilizar estos conocimientos en cualquier contexto (VMs, servidores físicos o entornos remotos).
+
+Finalmente, se explica cómo funcionan las tecnologías de Infrastructure as Code, muy utilizadas en entornos cloud y serverless para automatizar el despliegue y creación de infraestructura, que usan las herramientas y procesos explicados en las secciones anteriores y los automatizan y “wrapean” junto con scripting básico para aprovisionar tanto la infraestructura como la configuración de los sistemas.
+
+---
+
+<p align="center">
+  <strong>
+    <a href="#instalacion-de-debian-servers">Debian Server Guide</a> ·
+    <a href="#maquinas-virtuales-vms">VMs Guide</a> ·
+    <a href="#conexion-segura-a-maquinas-con-ssh-daemon-sshd">SSH Guide</a> ·
+    <a href="#ssh-en-automatizacion-y-aprovisionamiento">IaC Guides</a>
+  </strong>
+</p>
+
+---
 
 ## 🐚 Instalacion de debian servers
 
