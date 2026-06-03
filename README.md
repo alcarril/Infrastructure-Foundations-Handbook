@@ -17,9 +17,10 @@ Todo esto lleva al entendimiento de cómo hacer estos procesos manualmente desde
     <a href="#-instalaciones-avanzadas-de-debian-server">Advanced Install</a> ·
     <a href="#-máquinas-virtuales-vms">VMs Guide</a> ·
     <a href="#-configuración-de-red-de-máquinas-virtuales-desde-el-hipervisor">VMs Network</a> ·
-    <a href="#-conexion-segura-a-maquinas-con-ssh-daemon-sshd">SSH Guide</a> ·
+    <a href="#-conexion-segura-a-máquinas-con-ssh-daemon-sshd">SSH Guide</a> ·
     <a href="#-guia-para-conectarse-desde-vscode">SSH + VSCode</a> ·
-    <a href="#el-paso-lógico-de-lo-manual-a-la-automatización">IaC</a>
+    <a href="#-aprovisionamiento-e-iac-automatizando-la-creacion-y-configuracion-de-infraestructura
+">IaC</a>
   </strong>
 </p>
 
@@ -302,13 +303,13 @@ d-i pkgsel/upgrade select safe-upgrade
 # Comando tardío (Late Command) para inyectar configuración post-instalación
 # Aquí se crea el directorio .ssh, se añade la clave pública y se levanta el servicio HTTPS
 d-i preseed/late_command string \
-	in-target mkdir -p /home/sysadmin/.ssh; \
-	echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJuYourPublicSSHKeyHere sysadmin@provision" > /target/home/sysadmin/.ssh/authorized_keys; \
-	in-target chown -R sysadmin:sysadmin /home/sysadmin/.ssh; \
-	in-target chmod 700 /home/sysadmin/.ssh; \
-	in-target chmod 600 /home/sysadmin/.ssh/authorized_keys; \
-	in-target systemctl enable ssh; \
-	in-target systemctl enable nginx
+    in-target mkdir -p /home/sysadmin/.ssh; \
+    echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJuYourPublicSSHKeyHere sysadmin@provision" > /target/home/sysadmin/.ssh/authorized_keys; \
+    in-target chown -R sysadmin:sysadmin /home/sysadmin/.ssh; \
+    in-target chmod 700 /home/sysadmin/.ssh; \
+    in-target chmod 600 /home/sysadmin/.ssh/authorized_keys; \
+    in-target systemctl enable ssh; \
+    in-target systemctl enable nginx
 ```
 
 > ⚠️ En entornos reales las contraseñas no se ponen en texto plano, se usan **hashes**. Un solo error en el nombre de una variable hará que el instalador se detenga en esa pantalla.
@@ -351,11 +352,16 @@ Un hipervisor es una capa de abstracción que virtualiza los recursos del hardwa
 > ℹ️ **Más información sobre VMs e hipervisores:** Si quieres profundizar en los usos específicos, tecnologías de hipervisores de escritorio y servicios remotos, puedes consultar:
 > [¿Qué es una VM, el hipervisor y principales tecnologías?](https://www.notion.so/Que-es-una-Vm-el-hipervisor-y-proncipales-tecnologias-357b80eb3d8880948fafdfbbbd22fe1d)
 
+---
+
 ## 🖥️ Creación y configuración de la VM desde el hipervisor
+---
 
 ### Crear VMs a través del hipervisor (manual)
 
 A la hora de crear la máquina virtual de VirtualBox desde la interfaz del programa tenemos varias opciones para hacerlo. Lo primero es seleccionar la opción de crear máquina. Una vez seleccionada se abrirá una nueva pestaña donde podremos elegir:
+
+---
 
 ### 1. Configurar nombre de la máquina, localización en el host e ISO
 
@@ -364,6 +370,8 @@ A la hora de crear la máquina virtual de VirtualBox desde la interfaz del progr
 - **La ISO del sistema operativo** que va a usar la máquina (tendremos que tenerla descargada en nuestro sistema)
 
 ![Configuración: Nombre, Localización e ISO](assets/vms-creation-config/vm_01_name_location_iso.png)
+
+---
 
 ### 2. Configurar especificaciones de arquitectura de sistema operativo
 
@@ -706,7 +714,8 @@ Se asocian a una VM concreta para aislar acceso y permisos.
 
 <br>
 
----
+
+>
 
 ## 🔐 Conexion segura a maquinas con SSH daemon (`sshd`)
 
@@ -1038,7 +1047,7 @@ Es especialmente util en entornos de infraestructura porque puedes administrar l
 
 ---
 
-## El paso lógico: De lo manual a la automatización
+## 🤖​ Aprovisionamiento e IaC: Automatizando la Creacion y Configuracion de Infraestructura
 
 Todo el proceso que hemos visto hasta ahora en este repositorio (crear máquinas virtuales, configurar redes y realizar la instalación de Debian paso a paso) es fundamental para entender los cimientos de la infraestructura. Sin embargo, hacerlo de forma manual en el mundo real es un proceso **tedioso, lento y propenso a errores**.
 
