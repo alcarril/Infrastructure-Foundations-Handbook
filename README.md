@@ -359,6 +359,7 @@ Un hipervisor es una capa de abstracción que virtualiza los recursos del hardwa
 ### Crear VMs a través del hipervisor (manual)
 
 A la hora de crear la máquina virtual de VirtualBox desde la interfaz del programa tenemos varias opciones para hacerlo. Lo primero es seleccionar la opción de crear máquina. Una vez seleccionada se abrirá una nueva pestaña donde podremos elegir:
+
 ---
 
 ### 1. Configurar nombre de la máquina, localización en el host e ISO
@@ -380,6 +381,8 @@ A la hora de crear la máquina virtual de VirtualBox desde la interfaz del progr
 - **Elección de versión de sistema (arquitectura)**
 
 ![Especificaciones de Arquitectura OS](assets/vms-creation-config/vm_02_arch_os.png)
+
+---
 
 ### 3. Configurar especificaciones de hardware virtualizado para la máquina
 
@@ -404,6 +407,8 @@ Tendremos que configurar varias cosas desde el hipervisor. La instalación manua
 ![Configuración: Instalación Desatendida](assets/vms-creation-config/vm_05_unattended_install.png)
 
 Por otra parte, el resto de la instalación y configuración del sistema se hace automáticamente. Le damos a "finish" y comienza: descarga de paquetes, elección de software, etc. Cuando acabe la instalación solo tendremos que loguearnos y ya estaremos dentro de un sistema operativo preconfigurado.
+
+---
 
 ### 2. Instalación manual
 
@@ -565,6 +570,7 @@ El hipervisor crea una red virtual completamente aislada (por ejemplo, ***intnet
 
 </details>
 
+---
 
 ## 🧩 Configuraciones extras de Hipervisores para VMs
 
