@@ -1028,7 +1028,7 @@ Es especialmente util en entornos de infraestructura porque puedes administrar l
 **Se abre el menu de conexiones remotas. Aqui podemos anadir hosts, configurarlos, conectar con contenedores Docker y mas. Selecciona \"Add New SSH Host...\".**
 
 <p align="center">
-  <img src="assets/ssh-vscode/ssh_menudeconexion.png" alt="Menu de conexiones remotas" width="40%" height="auto">
+  <img src="assets/ssh-vscode/ssh_menudeconexion.png" alt="Menu de conexiones remotas" width="70%" height="auto">
 </p>
 
 ---
@@ -1037,7 +1037,7 @@ Es especialmente util en entornos de infraestructura porque puedes administrar l
 **Selecciona \"Add New SSH Host...\" para registrar una nueva conexion.**
 
 <p align="center">
-  <img src="assets/ssh-vscode/ssh_añadirhost.png" alt="Anadir nuevo host SSH" width="40%" height="auto">
+  <img src="assets/ssh-vscode/ssh_añadirhost.png" alt="Anadir nuevo host SSH" width="70%" height="auto">
 </p>
 
 ---
@@ -1046,7 +1046,7 @@ Es especialmente util en entornos de infraestructura porque puedes administrar l
 **Escribe el comando de conexion en formato `usuario@IP` (ej. `debian@192.168.1.50`) y confirma.**
 
 <p align="center">
-  <img src="assets/ssh-vscode/ssh_poner_ususarioiphost.png" alt="Poner usuario e IP del host" width="40%" height="auto">
+  <img src="assets/ssh-vscode/ssh_poner_ususarioiphost.png" alt="Poner usuario e IP del host" width="70%" height="auto">
 </p>
 
 ---
@@ -1055,7 +1055,7 @@ Es especialmente util en entornos de infraestructura porque puedes administrar l
 **Elige el fichero de configuracion SSH donde guardar los datos del host (normalmente `~/.ssh/config`).**
 
 <p align="center">
-  <img src="assets/ssh-vscode/ssh_elegirficheroclavesconfig.png" alt="Elegir fichero de config SSH" width="40%" height="auto">
+  <img src="assets/ssh-vscode/ssh_elegirficheroclavesconfig.png" alt="Elegir fichero de config SSH" width="70%" height="auto">
 </p>
 
 ---
@@ -1064,7 +1064,7 @@ Es especialmente util en entornos de infraestructura porque puedes administrar l
 **VS Code muestra una notificacion confirmando que el host se ha añadido. Desde este mensaje puedes iniciar la conexion directamente o abrir la configuracion del host para editarla.**
 
 <p align="center">
-  <img src="assets/ssh-vscode/ssh_host aded.png" alt="Host anadido correctamente" width="40%" height="auto">
+  <img src="assets/ssh-vscode/ssh_host aded.png" alt="Host anadido correctamente" width="70%" height="auto">
 </p>
 
 ---
@@ -1073,7 +1073,7 @@ Es especialmente util en entornos de infraestructura porque puedes administrar l
 **Si elegiste \"Config\" en la notificacion, se abre este menu donde puedes seleccionar \"Connect to Host...\" para iniciar la conexion.**
 
 <p align="center">
-  <img src="assets/ssh-vscode/mewmenu.png" alt="Menu para conectar al host" width="40%" height="auto">
+  <img src="assets/ssh-vscode/mewmenu.png" alt="Menu para conectar al host" width="70%" height="auto">
 </p>
 
 ---
@@ -1082,7 +1082,7 @@ Es especialmente util en entornos de infraestructura porque puedes administrar l
 **Tanto si conectaste desde la notificacion como desde el menu de configuracion, la ventana renderiza el arbol de directorios de la maquina remota con la barra inferior en verde, permitiendo explorar, editar y gestionar archivos con todas las capacidades del IDE.**
 
 <p align="center">
-  <img src="assets/ssh-vscode/ssh_conexioncreadaemventana.png" alt="Arbol de directorios remoto en VS Code" width="40%" height="auto">
+  <img src="assets/ssh-vscode/ssh_conexioncreadaemventana.png" alt="Arbol de directorios remoto en VS Code" width="60%" height="auto">
 </p>
 
 <br>
