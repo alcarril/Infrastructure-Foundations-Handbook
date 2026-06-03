@@ -3,24 +3,23 @@
 
 ## Overview
 
-Guía práctica para aprender a construir infraestructura desde cero, aplicable tanto a máquinas virtuales como a servidores Debian en entornos de laboratorio o producción ligera, incluyendo escenarios más avanzados como sistemas cifrados o configuraciones base para servicios remotos.
+Guías prácticas para entornos **sandbox**, **desarrollo**, **producción** y **serverless** con Oracle VirtualBox y Debian Server, cubriendo las distintas configuraciones que se pueden aplicar en cada fase: particionados, LVM, LUKS, tipos de instalación, modos de red y aprovisionamiento con Bash. Cada sección incluye enlaces a páginas de Notion con información más completa y notas técnicas.
 
-Cubre la instalación de Debian Server con opciones como particionado, LVM, cifrado con LUKS e instalaciones desatendidas o preconfiguradas (preseed), junto con decisiones de configuración según el entorno de uso.
+Se explica cómo gestionar las máquinas por SSH, cómo funciona el protocolo, el daemon `sshd` y cómo conectar desde VS Code para administrar sistemas remotos.
 
-Incluye la creación y gestión de máquinas virtuales en VirtualBox, con modos de red (NAT, bridge, host-only, internal), asignación de recursos y escenarios típicos como sandboxes, entornos de desarrollo, pruebas de servicios o pequeñas arquitecturas de backend, junto con una sección de SSH como herramienta base de administración remota y gestión de sistemas.
-
-El objetivo es entender de forma práctica cómo se construye infraestructura manualmente y reutilizar estos conocimientos en cualquier contexto (VMs, servidores físicos o entornos remotos).
-
-Finalmente, se explica cómo funcionan las tecnologías de Infrastructure as Code, muy utilizadas en entornos cloud y serverless para automatizar el despliegue y creación de infraestructura, que usan las herramientas y procesos explicados en las secciones anteriores y los automatizan y “wrapean” junto con scripting básico para aprovisionar tanto la infraestructura como la configuración de los sistemas.
+Todo esto lleva al entendimiento de cómo hacer estos procesos manualmente desde herramientas de **IaC (Infrastructure as Code)**. Esta es la base para entenderlas porque solo son **wrappers** de los procesos que se usan aquí.
 
 ---
 
 <p align="center">
   <strong>
     <a href="#instalacion-de-debian-servers">Debian Server Guide</a> ·
+    <a href="#tipos-avanzados-de-instalacion-de-debian-server">Advanced Install</a> ·
     <a href="#maquinas-virtuales-vms">VMs Guide</a> ·
+    <a href="#configuracion-de-red-de-maquinas-virtuales-desde-el-hipervisor">VMs Network</a> ·
     <a href="#conexion-segura-a-maquinas-con-ssh-daemon-sshd">SSH Guide</a> ·
-    <a href="#ssh-en-automatizacion-y-aprovisionamiento">IaC Guides</a>
+    <a href="#guia-para-conectarse-desde-vscode">SSH + VSCode</a> ·
+    <a href="#el-paso-logico-de-lo-manual-a-la-automatizacion">IaC</a>
   </strong>
 </p>
 
@@ -945,27 +944,7 @@ ssh debian-lab
 
 </details>
 
----
 
-
-### Buenas practicas
-
-- No permitir login directo como `root`.
-- Usar claves SSH para administracion habitual.
-- Desactivar contrasenas cuando las claves ya funcionen.
-- Limitar usuarios con `AllowUsers`.
-- Abrir el puerto SSH solo en la red necesaria.
-- Validar cambios con `sudo sshd -t` antes de recargar.
-- En servidores expuestos, combinar SSH con firewall, actualizaciones y revision de logs.
-
----
-> ℹ️ **Mas informacion sobre SSH y OpenSSH Server:** Puedes leer mas detalles sobre el protocolo SSH y el servicio `sshd` en:
-> [SSH y OpenSSH Server](https://broken-snowdrop-f03.notion.site/Ssh-y-Open-Ssh-server-32db80eb3d888029b02cdf35de595184)
-
-> ℹ️ **Mas informacion sobre configuracion de OpenSSH Server:** Puedes ver opciones de configuracion y ajustes del servicio `sshd` en:
-> [Servicio OpenSSH Server](https://broken-snowdrop-f03.notion.site/Servicio-Openssh-server-32db80eb3d8880a583d0e348a3b2640e?pvs=74)
-
----
 
 
 ## 🔌🧩 Conexiones SSH desde host a VM segun modo de red
@@ -1059,19 +1038,88 @@ Es especialmente util en entornos de infraestructura porque puedes administrar l
 
 ---
 
-### SSH en automatizacion y aprovisionamiento
+## El paso lógico: De lo manual a la automatización
 
-Cuando una herramienta crea una VM o un servidor, normalmente necesita una forma de entrar para ejecutar comandos. SSH permite ese canal de administracion.
+Todo el proceso que hemos visto hasta ahora en este repositorio (crear máquinas virtuales, configurar redes y realizar la instalación de Debian paso a paso) es fundamental para entender los cimientos de la infraestructura. Sin embargo, hacerlo de forma manual en el mundo real es un proceso **tedioso, lento y propenso a errores**.
 
-Ejemplos habituales:
-
-- **Vagrant:** crea la VM, configura una clave SSH y entra para ejecutar scripts de provision.
-- **Ansible:** se conecta por SSH y aplica playbooks sin instalar agente en el servidor.
-- **Packer:** crea imagenes de sistema conectandose por SSH para instalar paquetes y dejar una imagen preparada.
-- **cloud-init:** configura usuarios, claves SSH, paquetes y scripts en el primer arranque de una VM cloud.
-- **Terraform/OpenTofu:** normalmente crea la infraestructura; despues puede delegar la configuracion en cloud-init, Ansible u otras herramientas.
-
-Por eso, en infraestructura, las claves SSH no son solo una forma comoda de entrar: son la base para automatizar el aprovisionamiento inicial de maquinas.
+En entornos profesionales —ya hablemos de arquitecturas *serverless*, entornos *cloud*, servidores *host* dedicados o incluso laboratorios locales— este flujo se automatiza por completo para poder escalar.
 
 ---
 
+### 1. La Fase de Aprovisionamiento
+
+Una vez que un servidor físico o virtual se enciende por primera vez, el sistema operativo base está completamente "vacío". Para que pueda ejecutar un servicio o cumplir una función, es obligatorio configurarlo por dentro. A esta etapa se le conoce como **Aprovisionamiento** e incluye:
+
+* Instalación y actualización de paquetes y repositorios.
+* Configuración de servicios esenciales (servidores web, bases de datos, etc.).
+* Gestión de usuarios, claves y permisos.
+* Configuración fina de red y directrices de seguridad (*hardening*).
+
+Tradicionalmente, esto se realiza ejecutando comandos del sistema operativo directamente desde la **CLI** (línea de comandos).
+
+> 🔗 **Repositorio recomendado:** [Si quieres aprender a gestionar, administrar y exprimir un sistema por dentro desde la CLI, echa un vistazo a este repositorio especializado](https://www.google.com/search?q=tu-enlace-a-otro-repo)
+
+En la industria existen principalmente **dos maneras** de abordar y estructurar este aprovisionamiento (de forma manual o automatizada mediante flujos de ejecución).
+
+> 🔗 **Más información en Notion:** [Las dos metodologías de aprovisionamiento y gestión del sistema](https://www.google.com/search?q=tu-enlace-a-notion-formas)
+
+---
+
+### 2. ¿Qué es IaC (Infrastructure as Code)?
+
+Para evitar configurar decenas de servidores uno a uno a través de la CLI, nacen las herramientas de **IaC (Infraestructura como Código)**. Estas tecnologías permiten definir mediante archivos de texto tanto la creación física/virtual de la infraestructura como la instalación y configuración del software que corre en ellas.
+
+Podemos dividir el proceso automático en dos grandes bloques:
+
+#### A. Creación de la Infraestructura e Instalación del SO
+
+Las herramientas encargadas de "levantar" la máquina no son mágicas: son **wrappers** (envoltorios) que utilizan los lenguajes de programación y las APIs de los propios hipervisores (ya sea VirtualBox, KVM, VMware o proveedores Cloud) para automatizar la creación de hardware virtual.
+
+Para conseguir que el sistema operativo se instale solo sin que tengamos que interactuar con la pantalla, estas herramientas recurren a dos métodos (los cuales conectan con la base de este repositorio):
+
+1. **Archivos de respuesta avanzada:** Uso de `preseed.cfg` (en Debian) o `Autoinstall` (en Ubuntu) para automatizar las preguntas del instalador.
+2. **Imágenes preconfiguradas:** Uso de ISOs modificadas que ya vienen con configuraciones básicas inyectadas de fábrica.
+
+> 🔗 **Más información en Notion:** [Cómo los Wrappers interactúan con los Hipervisores e Instalaciones Desatendidas](https://www.google.com/search?q=tu-enlace-a-notion-instalacion)
+
+#### B. El Aprovisionamiento Automático
+
+Para que la herramienta de IaC pueda configurar el sistema operativo una vez instalado, requiere obligatoriamente una vía de entrada remota. Esto se logra configurando de manera muy breve un enlace por **SSH o HTTP** junto con un usuario temporal con privilegios de `sudo`. A través de este túnel, la herramienta inyecta los *provision scripts* encargados de moldear el servidor a nuestro gusto.
+
+> 🔗 **Más información en Notion:** [Requerimientos técnicos para el aprovisionamiento automático y scripts de inyección](https://www.google.com/search?q=tu-enlace-a-notion-reqs)
+
+---
+
+### 3. Mapa de Herramientas de IaC
+
+Para consolidar el flujo mental que analizamos en los documentos de5eca66-6ed7-4a5e-813d-0f46f8890cc4 y 1076a8c3-950e-45d1-ab2c-8cfc504d928d, aquí tienes una tabla con las herramientas más famosas de la industria, mapeando qué parte del proceso automatizan y qué tecnología están abstrayendo (*wrapeando*) por debajo:
+
+| Herramienta | ¿Qué automatiza en el flujo? | ¿Qué está *wrapeando* / usando por dentro? |
+| --- | --- | --- |
+| **Vagrant** | Creación de Infraestructura (Local/Dev) | Wrappea las CLIs/APIs de hipervisores locales (VirtualBox, VMware) utilizando scripts de Ruby. |
+| **Terraform** | Creación de Infraestructura (Cloud/On-premise) | Wrappea las APIs de proveedores de infraestructura (AWS, Azure, GCP, vSphere) abstrayendo las llamadas HTTP mediante su lenguaje HCL. |
+| **Pulumi** | Creación de Infraestructura (Cloud/Nativo) | Similar a Terraform, pero wrappea las APIs de los proveedores usando lenguajes de programación reales (Python, TypeScript, Go). |
+| **Cloud-init** | Aprovisionamiento Inicial | Es un sistema nativo que wrappea el primer arranque del SO, leyendo metadatos e inyectando configuraciones de red, llaves SSH y usuarios antes de que entre el usuario. |
+| **Ansible** | Aprovisionamiento y Configuración Final | Wrappea conexiones SSH (o WinRM) nativas para ejecutar módulos de Python de forma remota sobre el sistema operativo, modificando archivos, servicios y paquetes sin instalar agentes. |
+
+---
+
+### Buenas practicas
+
+- No permitir login directo como `root`.
+- Usar claves SSH para administracion habitual.
+- Desactivar contrasenas cuando las claves ya funcionen.
+- Limitar usuarios con `AllowUsers`.
+- Abrir el puerto SSH solo en la red necesaria.
+- Validar cambios con `sudo sshd -t` antes de recargar.
+- En servidores expuestos, combinar SSH con firewall, actualizaciones y revision de logs.
+
+---
+
+> ℹ️ **Mas informacion sobre SSH y OpenSSH Server:** Puedes leer mas detalles sobre el protocolo SSH y el servicio `sshd` en:
+> [SSH y OpenSSH Server](https://broken-snowdrop-f03.notion.site/Ssh-y-Open-Ssh-server-32db80eb3d888029b02cdf35de595184)
+
+> ℹ️ **Mas informacion sobre configuracion de OpenSSH Server:** Puedes ver opciones de configuracion y ajustes del servicio `sshd` en:
+> [Servicio OpenSSH Server](https://broken-snowdrop-f03.notion.site/Servicio-Openssh-server-32db80eb3d8880a583d0e348a3b2640e?pvs=74)
+
+---
