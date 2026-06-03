@@ -17,8 +17,8 @@ Todo esto lleva al entendimiento de cómo hacer estos procesos manualmente desde
     <a href="#-instalaciones-avanzadas-de-debian-server">Advanced Install</a> ·
     <a href="#-máquinas-virtuales-vms">VMs Guide</a> ·
     <a href="#-configuración-de-red-de-máquinas-virtuales-desde-el-hipervisor">VMs Network</a> ·
-    <a href="#-conexion-segura-a-máquinas-con-ssh-daemon-sshd">SSH Guide</a> ·
-    <a href="#-guia-para-conectarse-desde-vscode">SSH + VSCode</a> ·
+    <a href="#-conexion-segura-a-maquinas-con-ssh-daemon-sshd">SSH Guide</a> ·
+    <a href="#-guia-para-conectarse-por-ssh-desde-vscode">SSH + VSCode</a> ·
     <a href="#-aprovisionamiento-e-iac-automatizando-la-creacion-y-configuracion-de-infraestructura
 ">IaC</a>
   </strong>
@@ -26,7 +26,7 @@ Todo esto lleva al entendimiento de cómo hacer estos procesos manualmente desde
 
 ---
 
-## 🐚 Instalacion de debian servers
+# 🐚 Instalacion de debian servers
 
 Cuando instalamos el SO desde la BIOS del sistema hay varias opciones para hacerlo. Según cuál seleccionamos, la configuración del SO será más específica o menos en la fase de instalación. Por norma general, las cosas que hay que configurar en esta fase, independientemente del tipo de instalación, son:
 
@@ -214,7 +214,7 @@ Modo con **control total** sobre cada fase de la instalación. A diferencia del 
 - **GRUB:** Controlar exactamente dónde y cómo se instala el cargador de arranque.
 
 > ⚠️ **Indicado para administradores con hardware muy específico**, servidores con RAID/LVM avanzado o sistemas ultra-ligeros donde se busca reducir la superficie de ataque.
-<div align="left">
+<div align="center">
 	<img src="assets/instalacion-avanzada-debian/expert-options.png" alt="Opciones específicas del modo experto" width="80%" />
 	<br>
 	<sup> Interfaz avanzada del instalador donde se exponen los menús de configuración específicos del Modo Experto.</sup>
@@ -323,7 +323,7 @@ El instalador solicita la ruta exacta donde se encuentra localizado este archivo
 * **Ruta no local:** A través de un servidor web remoto en la red utilizando el protocolo HTTP (`http://...`).
 * **Ruta local:** Apuntando directamente al archivo guardado dentro del propio medio de almacenamiento o USB físico (`file://...`).
 
-<div align="left">
+<div align="center">
 	<img src="assets/instalacion-avanzada-debian/preseed-autoinstall.png" alt="Instalación desatendida desde el hipervisor" width="95%" />
 	<br>
 	<sup>Proceso de carga de la instalación desatendida y automatizada desde el entorno del hipervisor.</sup>
@@ -331,10 +331,11 @@ El instalador solicita la ruta exacta donde se encuentra localizado este archivo
 
 
 <br>
+<br>
 
 
 
-## 🦝 Máquinas Virtuales (VMs)
+# 🦝 Máquinas Virtuales (VMs)
 
 
 Un hipervisor es una capa de abstracción que virtualiza los recursos del hardware (CPU, memoria, almacenamiento, dispositivos de red) del host, permitiendo crear máquinas virtuales independientes con sus propios kernels y sistemas operativos, aisladas entre sí a nivel de software.
@@ -717,11 +718,12 @@ Se asocian a una VM concreta para aislar acceso y permisos.
 </details>
 
 <br>
+<br>
 
 
 >
 
-## 🔐 Conexion segura a maquinas con SSH daemon (`sshd`)
+# 🔐 Conexion segura a maquinas con SSH daemon (`sshd`)
 
 SSH es el protocolo mas usado para administrar maquinas Linux de forma remota mediante una conexion cifrada. En Debian, el servicio que acepta conexiones SSH entrantes se llama **OpenSSH Server** y el proceso que queda escuchando en la maquina es el **SSH daemon**, normalmente `sshd`.
 
@@ -739,8 +741,8 @@ En VMs, servidores locales, sandboxes y entornos de infraestructura, SSH es una 
 
 Si durante la instalacion de Debian marcaste **SSH Server**, OpenSSH Server ya deberia estar instalado. Esta opcion aparece en la seleccion de paquetes del instalador.
 
-<h4 align="left">Seleccion de SSH Server durante la instalacion</h4>
-<p align="left">
+<h4 align="center">Seleccion de SSH Server durante la instalacion</h4>
+<p align="center">
   <img src="assets/instacion-manual-debian-server/image_25.png" alt="Seleccion de SSH Server durante la instalacion de Debian" width="85%" height="auto">
 </p>
 
@@ -777,6 +779,11 @@ El servicio queda escuchando por defecto en el puerto `22/TCP`.
 
 ### Archivos importantes de SSH
 
+SSH (Secure Shell) es un daemon que se configura mediante archivos de configuración tanto en el **cliente** como en el **servidor**.
+
+<details>
+<summary><strong>Archivos de configuración de SSH</strong></summary>
+
 En el **servidor**:
 
 ```bash
@@ -804,6 +811,10 @@ En el **cliente**:
 - `id_ed25519.pub`: clave publica. Esta si se copia al servidor.
 - `known_hosts`: servidores conocidos por el cliente.
 - `config`: atajos de conexion para no escribir IP, usuario, puerto o clave cada vez.
+
+</details>
+
+> ⚠️ Cada vez que se cambia la configuración de uno de estos archivos se tiene que reiniciar o recargar el servicio con `sudo systemctl restart ssh` o `sudo systemctl reload ssh`.
 
 ---
 
@@ -972,86 +983,115 @@ El modo de red de VirtualBox cambia la forma de llegar al puerto SSH de la VM de
 | **Host-Only** | Acceso desde el host a la IP de la red Host-Only. Ejemplo: `ssh usuario@192.168.56.10` |
 | **Internal Network** | Solo desde otra VM de la misma red interna, o usando un bastion/jump host. Ejemplo: `ssh -J usuario@IP_BASTION usuario@IP_VM_INTERNA` |
 
----
+<br>
+<br>
 
-## 🔌📺 Guia para conectarse desde VSCode
 
+# 🔌📺 Guia para conectarse por SSH desde VsCode
 
 
 La extension **Remote - SSH** de VS Code permite abrir una sesion SSH dentro del propio editor y trabajar con el arbol de directorios, archivos y terminal de la maquina remota como si estuvieras en local. En lugar de usar la terminal para editar con `nano` o `vim`, tienes todo el IDE: resaltado de sintaxis, autocompletado, control de versiones, terminal integrada y explorador de archivos grafico apuntando al servidor remoto.
 
 Es especialmente util en entornos de infraestructura porque puedes administrar la configuracion de varias VMs desde una sola ventana, editar archivos de configuracion (como `/etc/ssh/sshd_config` o scripts en `/usr/local/bin/`), lanzar comandos y hacer deploy sin salir del editor. Es una alternativa mucho mas agil que el SSH clasico por terminal cuando necesitas modificar varios archivos o entender la estructura del sistema de forma visual.
 
-<details>
-<summary><strong>📋 Guia de conexion paso a paso (Remote - SSH) — haz clic para desplegar</strong></summary>
-
-<br>
-
-### **1.** Busca la extension **Remote - SSH** de Microsoft en el panel de extensiones de VS Code.
-
-<p align="left">
-  <img src="assets/ssh-vscode/elecciondeextension.png" alt="Buscar extension Remote SSH" width="40%" height="auto">
-</p>
-
-### **2.** Instala la extension y espera a que termine la descarga.
-
-<p align="left">
-  <img src="assets/ssh-vscode/ssh_instalar_extension.png" alt="Instalar extension Remote SSH" width="64%" height="auto">
-</p>
-
-### **3.** Abre la paleta de conexion SSH desde la esquina inferior izquierda (icono verde de conexion remota).
-
-<p align="left">
-  <img src="assets/ssh-vscode/ssh_abir_paleta_conexion.png" alt="Abrir paleta de conexion SSH" width="40%" height="auto">
-</p>
-
-### **4.** Se abre el menu de conexiones remotas. Aqui podemos anadir hosts, configurarlos, conectar con contenedores Docker y mas. Selecciona **"Add New SSH Host..."**.
-
-<p align="left">
-  <img src="assets/ssh-vscode/ssh_menudeconexion.png" alt="Menu de conexiones remotas" width="40%" height="auto">
-</p>
-
-### **5.** Selecciona **"Add New SSH Host..."** para registrar una nueva conexion.
-
-<p align="left">
-  <img src="assets/ssh-vscode/ssh_añadirhost.png" alt="Anadir nuevo host SSH" width="40%" height="auto">
-</p>
-
-### **6.** Escribe el comando de conexion en formato `usuario@IP` (ej. `debian@192.168.1.50`) y confirma.
-
-<p align="left">
-  <img src="assets/ssh-vscode/ssh_poner_ususarioiphost.png" alt="Poner usuario e IP del host" width="40%" height="auto">
-</p>
-
-### **7.** Elige el fichero de configuracion SSH donde guardar los datos del host (normalmente `~/.ssh/config`).
-
-<p align="left">
-  <img src="assets/ssh-vscode/ssh_elegirficheroclavesconfig.png" alt="Elegir fichero de config SSH" width="40%" height="auto">
-</p>
-
-### **8.** VS Code muestra una notificacion confirmando que el host se ha añadido. Desde este mensaje puedes **iniciar la conexion** directamente o **abrir la configuracion** del host para editarla.
-
-<p align="left">
-  <img src="assets/ssh-vscode/ssh_host aded.png" alt="Host anadido correctamente" width="40%" height="auto">
-</p>
-
-### **9.** Si elegiste **"Config"** en la notificacion, se abre este menu donde puedes seleccionar **"Connect to Host..."** para iniciar la conexion.
-
-<p align="left">
-  <img src="assets/ssh-vscode/mewmenu.png" alt="Menu para conectar al host" width="40%" height="auto">
-</p>
-
-### **10.** Tanto si conectaste desde la notificacion como desde el menu de configuracion, la ventana renderiza el arbol de directorios de la maquina remota con la barra inferior en verde, permitiendo explorar, editar y gestionar archivos con todas las capacidades del IDE.
-
-<p align="left">
-  <img src="assets/ssh-vscode/ssh_conexioncreadaemventana.png" alt="Arbol de directorios remoto en VS Code" width="40%" height="auto">
-</p>
-
-</details>
 
 ---
 
-## 🤖​ Aprovisionamiento e IaC: Automatizando la Creacion y Configuracion de Infraestructura
+### **1. Buscar la extensión**
+**Busca la extension Remote - SSH de Microsoft en el panel de extensiones de VS Code.**
+
+<p align="center">
+  <img src="assets/ssh-vscode/elecciondeextension.png" alt="Buscar extension Remote SSH" width="40%" height="auto">
+</p>
+
+---
+
+### **2. Instalar la extensión**
+**Instala la extension y espera a que termine la descarga.**
+
+<p align="center">
+  <img src="assets/ssh-vscode/ssh_instalar_extension.png" alt="Instalar extension Remote SSH" width="64%" height="auto">
+</p>
+
+---
+
+### **3. Abrir la paleta de conexión**
+**Abre la paleta de conexion SSH desde la esquina inferior izquierda (icono verde de conexion remota).**
+
+<p align="center">
+  <img src="assets/ssh-vscode/ssh_abir_paleta_conexion.png" alt="Abrir paleta de conexion SSH" width="40%" height="auto">
+</p>
+
+---
+
+### **4. Menú de conexiones remotas**
+**Se abre el menu de conexiones remotas. Aqui podemos anadir hosts, configurarlos, conectar con contenedores Docker y mas. Selecciona \"Add New SSH Host...\".**
+
+<p align="center">
+  <img src="assets/ssh-vscode/ssh_menudeconexion.png" alt="Menu de conexiones remotas" width="40%" height="auto">
+</p>
+
+---
+
+### **5. Añadir nuevo host SSH**
+**Selecciona \"Add New SSH Host...\" para registrar una nueva conexion.**
+
+<p align="center">
+  <img src="assets/ssh-vscode/ssh_añadirhost.png" alt="Anadir nuevo host SSH" width="40%" height="auto">
+</p>
+
+---
+
+### **6. Configurar usuario e IP**
+**Escribe el comando de conexion en formato `usuario@IP` (ej. `debian@192.168.1.50`) y confirma.**
+
+<p align="center">
+  <img src="assets/ssh-vscode/ssh_poner_ususarioiphost.png" alt="Poner usuario e IP del host" width="40%" height="auto">
+</p>
+
+---
+
+### **7. Elegir fichero de configuración**
+**Elige el fichero de configuracion SSH donde guardar los datos del host (normalmente `~/.ssh/config`).**
+
+<p align="center">
+  <img src="assets/ssh-vscode/ssh_elegirficheroclavesconfig.png" alt="Elegir fichero de config SSH" width="40%" height="auto">
+</p>
+
+---
+
+### **8. Host añadido**
+**VS Code muestra una notificacion confirmando que el host se ha añadido. Desde este mensaje puedes iniciar la conexion directamente o abrir la configuracion del host para editarla.**
+
+<p align="center">
+  <img src="assets/ssh-vscode/ssh_host aded.png" alt="Host anadido correctamente" width="40%" height="auto">
+</p>
+
+---
+
+### **9. Conectar al host**
+**Si elegiste \"Config\" en la notificacion, se abre este menu donde puedes seleccionar \"Connect to Host...\" para iniciar la conexion.**
+
+<p align="center">
+  <img src="assets/ssh-vscode/mewmenu.png" alt="Menu para conectar al host" width="40%" height="auto">
+</p>
+
+---
+
+### **10. Entorno remoto listo**
+**Tanto si conectaste desde la notificacion como desde el menu de configuracion, la ventana renderiza el arbol de directorios de la maquina remota con la barra inferior en verde, permitiendo explorar, editar y gestionar archivos con todas las capacidades del IDE.**
+
+<p align="center">
+  <img src="assets/ssh-vscode/ssh_conexioncreadaemventana.png" alt="Arbol de directorios remoto en VS Code" width="40%" height="auto">
+</p>
+
+<br>
+<br>
+
+
+
+
+# 🤖​ Automatizacion de Infraestructura/aprovisionamiento e IaC
 
 Todo el proceso que hemos visto hasta ahora en este repositorio (crear máquinas virtuales, configurar redes y realizar la instalación de Debian paso a paso) es fundamental para entender los cimientos de la infraestructura. Sin embargo, hacerlo de forma manual en el mundo real es un proceso **tedioso, lento y propenso a errores**.
 
