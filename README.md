@@ -967,10 +967,9 @@ ssh debian-lab
 
 </details>
 
+---
 
-
-
-## 🔌🧩 Conexiones SSH desde host a VM segun modo de red
+###  Conexiones SSH desde host a VM segun modo de red
 
 
 El modo de red de VirtualBox cambia la forma de llegar al puerto SSH de la VM desde el cliente (host o exterior). Segun el modo de red, **la IP y el puerto a usar** en el comando `ssh` cambia.
@@ -981,6 +980,28 @@ El modo de red de VirtualBox cambia la forma de llegar al puerto SSH de la VM de
 | **Bridge** | La VM tiene IP propia en la red. Ejemplo: `ssh usuario@IP_DE_LA_VM` |
 | **Host-Only** | Acceso desde el host a la IP de la red Host-Only. Ejemplo: `ssh usuario@192.168.56.10` |
 | **Internal Network** | Solo desde otra VM de la misma red interna, o usando un bastion/jump host. Ejemplo: `ssh -J usuario@IP_BASTION usuario@IP_VM_INTERNA` |
+
+---
+
+### Buenas practicas
+
+- No permitir login directo como `root`.
+- Usar claves SSH para administracion habitual.
+- Desactivar contrasenas cuando las claves ya funcionen.
+- Limitar usuarios con `AllowUsers`.
+- Abrir el puerto SSH solo en la red necesaria.
+- Validar cambios con `sudo sshd -t` antes de recargar.
+- En servidores expuestos, combinar SSH con firewall, actualizaciones y revision de logs.
+
+---
+
+> ℹ️ **Mas informacion sobre SSH y OpenSSH Server:** Puedes leer mas detalles sobre el protocolo SSH y el servicio `sshd` en:
+> [SSH y OpenSSH Server](https://broken-snowdrop-f03.notion.site/Ssh-y-Open-Ssh-server-32db80eb3d888029b02cdf35de595184)
+
+> ℹ️ **Mas informacion sobre configuracion de OpenSSH Server:** Puedes ver opciones de configuracion y ajustes del servicio `sshd` en:
+> [Servicio OpenSSH Server](https://broken-snowdrop-f03.notion.site/Servicio-Openssh-server-32db80eb3d8880a583d0e348a3b2640e?pvs=74)
+
+---
 
 <br>
 <br>
@@ -1092,86 +1113,91 @@ Es especialmente util en entornos de infraestructura porque puedes administrar l
 
 # 🤖​ Automatizacion de Infraestructura aprovisionamiento e IaC
 
-Todo el proceso que hemos visto hasta ahora en este repositorio (crear máquinas virtuales, configurar redes y realizar la instalación de Debian paso a paso) es fundamental para entender los cimientos de la infraestructura. Sin embargo, hacerlo de forma manual en el mundo real es un proceso **tedioso, lento y propenso a errores**.
+Todo el proceso que hemos visto hasta ahora en este repositorio (crear máquinas virtuales, configurar redes y realizar la instalación de Debian paso a paso) es fundamental para entender los cimientos de la infraestructura. Sin embargo, hacerlo de forma manual en el mundo real es un proceso tedioso, lento y propenso a errores.
 
-En entornos profesionales —ya hablemos de arquitecturas *serverless*, entornos *cloud*, servidores *host* dedicados o incluso laboratorios locales— este flujo se automatiza por completo para poder escalar.
+En entornos profesionales —ya hablemos de arquitecturas serverless, plataformas cloud, servidores host dedicados, entornos de producción distribuidos o laboratorios locales— este flujo se automatiza por completo. **Automatizar no es un lujo; es una necesidad absoluta para poder escalar y estandarizar.** Si necesitas levantar 1 o 100 máquinas para tus propios servicios o para ofrecer Infraestructura como Servicio (IaaS), hacerlo a mano es inviable.
 
 ---
 
-### 1. La Fase de Aprovisionamiento
+### 1. La Fase de Aprovisionamiento y Configuración del Sistema
 
 Una vez que un servidor físico o virtual se enciende por primera vez, el sistema operativo base está completamente "vacío". Para que pueda ejecutar un servicio o cumplir una función, es obligatorio configurarlo por dentro. A esta etapa se le conoce como **Aprovisionamiento** e incluye:
 
-* Instalación y actualización de paquetes y repositorios.
+* Telar, instalación y actualización de paquetes y repositorios.
 * Configuración de servicios esenciales (servidores web, bases de datos, etc.).
 * Gestión de usuarios, claves y permisos.
 * Configuración fina de red y directrices de seguridad (*hardening*).
 
-Tradicionalmente, esto se realiza ejecutando comandos del sistema operativo directamente desde la **CLI** (línea de comandos).
+Tradicionalmente, esto se realiza ejecutando comandos del sistema operativo directamente desde la CLI (línea de comandos).
 
-> 🔗 **Repositorio recomendado:** [Si quieres aprender a gestionar, administrar y exprimir un sistema por dentro desde la CLI, echa un vistazo a este repositorio especializado](https://www.google.com/search?q=tu-enlace-a-otro-repo)
+> 🔗 **Mi repositorio recomendado:** Si quieres aprender a gestionar, administrar y exprimir un sistema por dentro desde la CLI, echa un vistazo a mi [repositorio especializado](https://github.com/alcarril/HBBSO-Docs).
 
-En la industria existen principalmente **dos maneras** de abordar y estructurar este aprovisionamiento (de forma manual o automatizada mediante flujos de ejecución).
+En la industria existen principalmente dos maneras de abordar y estructurar este aprovisionamiento (de forma manual o automatizada mediante flujos de ejecución).
 
-> 🔗 **Más información en Notion:** [Las dos metodologías de aprovisionamiento y gestión del sistema](https://www.google.com/search?q=tu-enlace-a-notion-formas)
+> 🔗 **Más información en Mi Notion:** [Las dos metodologías de aprovisionamiento y gestión del sistema](https://broken-snowdrop-f03.notion.site/Automatizaci-n-y-Configuraci-n-de-Entornos-con-Bash-374b80eb3d88803bb51edca3b10f02d6?pvs=74).
 
 ---
 
 ### 2. ¿Qué es IaC (Infrastructure as Code)?
 
-Para evitar configurar decenas de servidores uno a uno a través de la CLI, nacen las herramientas de **IaC (Infraestructura como Código)**. Estas tecnologías permiten definir mediante archivos de texto tanto la creación física/virtual de la infraestructura como la instalación y configuración del software que corre en ellas.
+Para evitar configurar decenas de servidores uno a uno a través de la CLI, nacen las herramientas de IaC (Infraestructura como Código). Estas tecnologías permiten definir mediante archivos de texto tanto la creación física/virtual de la infraestructura como la instalación y configuración del software que corre en ellas.
 
 Podemos dividir el proceso automático en dos grandes bloques:
 
 #### A. Creación de la Infraestructura e Instalación del SO
 
-Las herramientas encargadas de "levantar" la máquina no son mágicas: son **wrappers** (envoltorios) que utilizan los lenguajes de programación y las APIs de los propios hipervisores (ya sea VirtualBox, KVM, VMware o proveedores Cloud) para automatizar la creación de hardware virtual.
+Las herramientas encargadas de "levantar" la máquina no son mágicas. Piensa en ellas como un lenguaje de programación de alto nivel: **igual que Python está construido sobre C y tu código se acaba parseando a ensamblador, las herramientas de IaC son *wrappers* (envoltorios)**. Su trabajo es traducir tus órdenes limpias a las APIs o lenguajes de comandos nativos de los hipervisores (`qm` en Proxmox, `VBoxManage` en VirtualBox, etc.) para crear el hardware virtual.
 
-Para conseguir que el sistema operativo se instale solo sin que tengamos que interactuar con la pantalla, estas herramientas recurren a dos métodos (los cuales conectan con la base de este repositorio):
+Para conseguir que el sistema operativo se instale solo sin que tengamos que interactuar con la pantalla, estas herramientas recurren a dos métodos:
 
-1. **Archivos de respuesta avanzada:** Uso de `preseed.cfg` (en Debian) o `Autoinstall` (en Ubuntu) para automatizar las preguntas del instalador.
-2. **Imágenes preconfiguradas:** Uso de ISOs modificadas que ya vienen con configuraciones básicas inyectadas de fábrica.
+* **Archivos de respuesta avanzada:** Uso de `preseed.cfg` (en Debian) o *Autoinstall* (en Ubuntu) para automatizar las preguntas del instalador simulando el teclado.
+* **Imágenes preconfiguradas:** Uso de ISOs o plantillas modificadas que ya vienen con configuraciones básicas inyectadas de fábrica.
 
-> 🔗 **Más información en Notion:** [Cómo los Wrappers interactúan con los Hipervisores e Instalaciones Desatendidas](https://www.google.com/search?q=tu-enlace-a-notion-instalacion)
+> 🔗 **Más información en Mi Notion:** [Cómo los Wrappers interactúan con los Hipervisores e Instalaciones Desatendidas](https://broken-snowdrop-f03.notion.site/Como-se-automatiza-y-grappea-desde-IaC-la-creacion-de-VMs-374b80eb3d88806fa414d9189d1b7806?pvs=74).
 
 #### B. El Aprovisionamiento Automático
 
-Para que la herramienta de IaC pueda configurar el sistema operativo una vez instalado, requiere obligatoriamente una vía de entrada remota. Esto se logra configurando de manera muy breve un enlace por **SSH o HTTP** junto con un usuario temporal con privilegios de `sudo`. A través de este túnel, la herramienta inyecta los *provision scripts* encargados de moldear el servidor a nuestro gusto.
+Para que la herramienta de IaC pueda configurar el sistema operativo una vez instalado, requiere obligatoriamente un **punto de conexión inicial**. El establecimiento de este canal de comunicación se define previamente durante la fase de instalación, ya sea mediante *preseed configs / autoinstalls* o mediante el uso de *ISOs/imágenes preinstaladas* de fábrica, dejando preparado un acceso remoto (SSH), un puerto accesible y un usuario temporal con privilegios de `sudo`.
 
-> 🔗 **Más información en Notion:** [Requerimientos técnicos para el aprovisionamiento automático y scripts de inyección](https://www.google.com/search?q=tu-enlace-a-notion-reqs)
+> 🔗 **Más información en Mi Notion:** [Puntos de conexión y privilegios requeridos para el aprovisionamiento](https://broken-snowdrop-f03.notion.site/Requerimiento-minimos-para-poder-establecer-conexiones-por-en-fases-de-aprovsionamiento-despues-de-i-374b80eb3d8880bf937bdc4634f05b07).
+
+A través de este túnel inicial, la herramienta inyecta los *provision scripts* encargados de moldear el servidor para su entorno real. A nivel profesional, esto se traduce en hitos prácticos como:
+
+* Despliegue y puesta a punto de bases de datos (ej. PostgreSQL, Redis).
+* Instalación y securización de servidores web o proxies inversos (ej. Nginx, Traefik).
+* Preparación de entornos aislados de contenedores (ej. Docker, clústeres de Kubernetes).
+* Automatización de políticas de copias de seguridad y monitorización de logs (ej. Promtail, agentes de Grafana).
+
+El flujo completo exige que, una vez finalizadas estas configuraciones, se ejecute una fase de limpieza obligatoria: borrar por completo el usuario temporal de aprovisionamiento, eliminar sus scripts y revocar sus claves autorizadas para no dejar rastro ni vectores de ataque expuestos en la máquina final.
+
+> 🔗 **Más información en Mi Notion:** [Requerimientos técnicos para el aprovisionamiento automático y scripts de inyección](https://app.notion.com/p/Como-usan-el-ssh-pressed-y-usuarion-internamente-los-IaC-para-hacer-el-provision-de-los-host-373b80eb3d888099a2a6fac7885c2f85).
 
 ---
 
 ### 3. Mapa de Herramientas de IaC
 
-Para consolidar el flujo mental que analizamos en los documentos de5eca66-6ed7-4a5e-813d-0f46f8890cc4 y 1076a8c3-950e-45d1-ab2c-8cfc504d928d, aquí tienes una tabla con las herramientas más famosas de la industria, mapeando qué parte del proceso automatizan y qué tecnología están abstrayendo (*wrapeando*) por debajo:
+Aquí tienes el mapa visual de cómo se reparten el trabajo las herramientas más famosas de la industria, detallando qué parte del proceso automatizan y qué tecnología están abstrayendo (*wrapeando*) por debajo:
 
-| Herramienta | ¿Qué automatiza en el flujo? | ¿Qué está *wrapeando* / usando por dentro? |
+| **Tecnología** | **¿Qué hace?** | **¿Para qué sirve?** |
 | --- | --- | --- |
-| **Vagrant** | Creación de Infraestructura (Local/Dev) | Wrappea las CLIs/APIs de hipervisores locales (VirtualBox, VMware) utilizando scripts de Ruby. |
-| **Terraform** | Creación de Infraestructura (Cloud/On-premise) | Wrappea las APIs de proveedores de infraestructura (AWS, Azure, GCP, vSphere) abstrayendo las llamadas HTTP mediante su lenguaje HCL. |
-| **Pulumi** | Creación de Infraestructura (Cloud/Nativo) | Similar a Terraform, pero wrappea las APIs de los proveedores usando lenguajes de programación reales (Python, TypeScript, Go). |
-| **Cloud-init** | Aprovisionamiento Inicial | Es un sistema nativo que wrappea el primer arranque del SO, leyendo metadatos e inyectando configuraciones de red, llaves SSH y usuarios antes de que entre el usuario. |
-| **Ansible** | Aprovisionamiento y Configuración Final | Wrappea conexiones SSH (o WinRM) nativas para ejecutar módulos de Python de forma remota sobre el sistema operativo, modificando archivos, servicios y paquetes sin instalar agentes. |
+| **Vagrant** | Levanta VMs locales automáticas usando imágenes ya hechas. | Para que los desarrolladores tengan la misma máquina que producción en su PC. |
+| **Packer** | Arranca una ISO limpia y automatiza la instalación desde cero. | Para crear plantillas base de sistemas operativos (Golden Images) optimizadas. |
+| **Terraform / OpenTofu** | Orquesta infraestructura declarativa guardando un archivo de estado. | Para crear y gestionar redes, discos y VMs en múltiples proveedores o nubes. |
+| **Pulumi** | Orquesta infraestructura multi-proveedor usando lenguajes reales (Python, JS, Go). | Para desplegar recursos cloud con la flexibilidad de la programación tradicional. |
+| **AWS CDK** | Traduce lenguajes reales a plantillas nativas de CloudFormation. | Para crear infraestructura exclusivamente en AWS con soporte nativo inmediato. |
+| **Azure Bicep** | Lenguaje declarativo nativo y simplificado para Azure. | Para crear infraestructura en Azure sin lidiar con JSON ni estados externos. |
+| **Ansible** | Envía configuraciones en paralelo por SSH/WinRM sin instalar agentes. | Para configurar, parchear e instalar software en servidores ya encendidos. |
+| **AWS SSM** | Ejecuta scripts y parches de forma masiva a través de un agente interno. | Para gestionar y configurar flotas de VMs en AWS sin abrir puertos SSH. |
+| **cloud-init** | Lee metadatos y ejecuta un script de bootstrap en el primer arranque. | Para aprovisionamiento inicial ultraligero (usuarios, llaves SSH) en nubes o VPS. |
+| **Proxmox VE** | Hipervisor open-source (KVM/LXC) con API y CLI nativas. | Para montar un centro de datos virtual propio en servidores físicos locales. |
+| **VMware (ESXi)** | Hipervisor corporativo tradicional basado en API robusta. | Para gestionar clusters virtuales empresariales masivos de alta disponibilidad. |
 
 ---
 
-### Buenas practicas
+<br>
 
-- No permitir login directo como `root`.
-- Usar claves SSH para administracion habitual.
-- Desactivar contrasenas cuando las claves ya funcionen.
-- Limitar usuarios con `AllowUsers`.
-- Abrir el puerto SSH solo en la red necesaria.
-- Validar cambios con `sudo sshd -t` antes de recargar.
-- En servidores expuestos, combinar SSH con firewall, actualizaciones y revision de logs.
+# TU depues de leer esto
 
----
-
-> ℹ️ **Mas informacion sobre SSH y OpenSSH Server:** Puedes leer mas detalles sobre el protocolo SSH y el servicio `sshd` en:
-> [SSH y OpenSSH Server](https://broken-snowdrop-f03.notion.site/Ssh-y-Open-Ssh-server-32db80eb3d888029b02cdf35de595184)
-
-> ℹ️ **Mas informacion sobre configuracion de OpenSSH Server:** Puedes ver opciones de configuracion y ajustes del servicio `sshd` en:
-> [Servicio OpenSSH Server](https://broken-snowdrop-f03.notion.site/Servicio-Openssh-server-32db80eb3d8880a583d0e348a3b2640e?pvs=74)
-
----
+<p align="center">
+  <img src="assets/cuentamemas.jpg" alt="Cuentamemas" width="50%" height="auto">
+</p>
