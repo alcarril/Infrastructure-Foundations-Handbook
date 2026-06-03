@@ -7,7 +7,9 @@ Guías prácticas para entornos **sandbox**, **desarrollo**, **producción** y *
 
 Se explica cómo gestionar las máquinas por SSH, cómo funciona el protocolo, el daemon `sshd` y cómo conectar desde VS Code para administrar sistemas remotos.
 
-Todo esto lleva al entendimiento de cómo hacer estos procesos manualmente desde herramientas de **IaC (Infrastructure as Code)**. Esta es la base para entenderlas porque solo son **wrappers** de los procesos que se usan aquí.
+A efecto práctico, este repo te sirve tanto para crear una máquina virtual o instalar un Debian Server, como para trabajar en entornos locales y de desarrollo, y al mismo tiempo sentar las bases de lo que sería una infraestructura real.
+
+Si entiendes todo esto, entiendes por qué las herramientas de **IaC (Infrastructure as Code)** son necesarias y que solo son **wrappers** de tecnologías que ya conoces. Esta es la base del **DevOps**.
 
 ---
 
@@ -1176,7 +1178,7 @@ El flujo completo exige que, una vez finalizadas estas configuraciones, se ejecu
 
 ### 3. Mapa de Herramientas de IaC
 
-Aquí tienes el mapa visual de cómo se reparten el trabajo las herramientas más famosas de la industria, detallando qué parte del proceso automatizan y qué tecnología están abstrayendo (*wrapeando*) por debajo:
+Sabiendo ya cuáles son las bases de IaC y cómo encajan en el flujo **DevOps**, lo importante es saber qué tecnología usar en cada momento. Aquí tienes un resumen de las más usadas, con lo que hace cada una y para qué sirve:
 
 | **Tecnología** | **¿Qué hace?** | **¿Para qué sirve?** |
 | --- | --- | --- |
